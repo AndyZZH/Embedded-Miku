@@ -1,6 +1,7 @@
 #include <alsa/asoundlib.h>
 #include <iostream>
 #include <queue>
+#include <thread>
 using namespace std;
 
 extern "C" {
@@ -21,12 +22,15 @@ public:
     void setVolume(int newVolume);
     int getVolume() const { return volume; }
     unsigned long getFrameSize() const { return playbackBufferSize; }
-
+    short *getNextAudioReading();
 private:
-    queue<short *> sndBuffer;
+    queue<short *> sndQueue;
     int volume;
     unsigned long playbackBufferSize;
     snd_pcm_t *handle;
+
+    thread threadObj;
+    void recordingThread();
 };
 
 
@@ -61,6 +65,9 @@ AudioRecorder::AudioRecorder() {
     // ..get info on the hardware buffers:
     unsigned long unusedBufferSize = 0;
     snd_pcm_get_params(handle, &unusedBufferSize, &playbackBufferSize);
+
+    // Launch a new thread to start recording and push samples to the queue.
+    threadObj = thread([this]{ this->recordingThread(); });
 }
 
 
@@ -95,7 +102,39 @@ void AudioRecorder::setVolume(int newVolume) {
 }
 
 
+short *AudioRecorder::getNextAudioReading() {
+    short *returnVal = sndQueue.front();
+    sndQueue.pop();
+    return returnVal;
+} 
 
+
+void AudioRecorder::recordingThread() {
+    // TODO: Need to handle infinite loop. Possibly implement stopping mechanism. 
+    while (true) {
+        // Create a new array to store read samples
+        short *buffer = new short[playbackBufferSize];
+
+        // Read the audio
+        snd_pcm_sframes_t frames = snd_pcm_readi(handle, buffer, playbackBufferSize);
+
+        // Check for (and handle) possible error conditions on output
+        if (frames < 0) {
+            fprintf(stderr, "AudioMixer: readi() returned %li\n", frames);
+            frames = snd_pcm_recover(handle, frames, 1);
+        }
+        if (frames < 0) {
+            fprintf(stderr, "ERROR: Failed writing audio with snd_pcm_readi(): %li\n", frames);
+            exit(EXIT_FAILURE);
+        }
+        if (frames > 0 && frames < (long)playbackBufferSize) {
+            printf("Short write (expected %li, wrote %li)\n", playbackBufferSize, frames);
+        }
+
+        // Push the pointer of data to the queue
+        sndQueue.push(buffer);
+    }
+}
 
 
 // ----- Adapters to wrap C++ code into C
@@ -116,3 +155,6 @@ void AudioRecorder_init(void) {
     recorder = AudioRecorder();
 }
 
+short *AudioRecorder_getNextAudioReading(void) {
+    return recorder.getNextAudioReading();
+}
