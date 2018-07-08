@@ -17,8 +17,6 @@ unsigned long AudioRecorder_getFrameSize(void);
 // http://stackoverflow.com/questions/6787318/set-alsa-master-volume-from-c-code
 int  AudioRecorder_getVolume(void);
 void AudioRecorder_setVolume(int newVolume);
-// void AudioRecorder_IncreaseVolume(void);
-// void AudioRecorder_DecreaseVolume(void);
 
 #endif
 
