@@ -30,9 +30,6 @@ LFLAGS = -Llibs
 #CFLAGS += -pg
 
 
-test:
-	gcc $(CFLAGS) $(SOURCES) -o test
-
 all: wav node
 	$(CC_C) $(CFLAGS) $(SOURCES) -o $(OUTDIR)/$(TARGET)  $(LFLAGS) -lpthread -lasound
 
