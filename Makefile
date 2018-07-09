@@ -4,7 +4,7 @@
 # Edit this file to compile extra C files into their own programs.
 TARGET= wave_player
 
-SOURCES= 
+SOURCES= led.c
 
 
 PUBDIR = $(HOME)/cmpt433/public/myApps
@@ -30,6 +30,8 @@ LFLAGS = -Llibs
 #CFLAGS += -pg
 
 
+test:
+	gcc $(CFLAGS) $(SOURCES) -o test
 
 all: wav node
 	$(CC_C) $(CFLAGS) $(SOURCES) -o $(OUTDIR)/$(TARGET)  $(LFLAGS) -lpthread -lasound

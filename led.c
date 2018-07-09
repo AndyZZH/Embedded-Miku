@@ -6,7 +6,7 @@
 #include <fcntl.h>
 #include <string.h>
 #include <assert.h>
-#include <led.h>
+#include "led.h"
 
 #define FILE_NAME_EXPORT "/sys/class/gpio/export"
 #define FILE_NAME_UNEXPORT "/sys/class/gpio/unexport"
@@ -48,33 +48,37 @@ static int fileDesc_oe;
 static int screen[16][32];
 
 // function declartionas
-static int fileDesc_opener(int gpio_num)
+static int fileDesc_opener(int gpio_num);
 static void GPIO_setPins(void);
 static void GPIO_export_out(int gpio_num);
 
 static void LED_setPixel(int r, int c, int color);
-static void LED_clock(void)
-static void LED_latch(void)
-static void LED_bitsFromInt(int * arr, int input)
-static void LED_setRow(int rowNum)
-static void LED_setColourTop(int colour)
-static void LED_setColourBottom(int colour)
+static void LED_clock(void);
+static void LED_latch(void);
+static void LED_bitsFromInt(int * arr, int input);
+static void LED_setRow(int rowNum);
+static void LED_setColourTop(int colour);
+static void LED_setColourBottom(int colour);
 static void LED_refresh(void);
 
-int LED_init ()
+int LED_init (void)
 {
     GPIO_setPins();
     // clean up the screen
-    memset(screen, 0, sizeof(screen);
+    memset(screen, 0, sizeof(screen));
+    LED_refresh();
+    return 0;
 }
 
 void LED_cleanup(void)
 {
-     
+    // clean up the screen
+    memset(screen, 0, sizeof(screen));
+    LED_refresh();
     return;
 }
 
-void LED_display_rectagle(int x1, int y1, int x2, int y2, int color)
+void LED_display_rectangle(int x1, int y1, int x2, int y2, int color)
 {
     assert ( 0 <= x1 && x1 < 32);
     assert ( 0 <= x2 && x2 < 32);
@@ -108,21 +112,21 @@ void LED_display_rectagle(int x1, int y1, int x2, int y2, int color)
 
     for (int i = min_x; i <  max_x; i++ )
         for (int j = min_y; j < max_y; j++)
-            screen[i][j] = color;    
+            LED_setPixel(i,j,color);
 
     return;
 }
 
 void LED_clean_display()
 {
-    LED_display_rectangle(0,0, 31, 15);
+    LED_display_rectangle(0,0, 31, 15,0);
 }
 
 static int fileDesc_opener(int gpio_num)
 {
     char buf[BUFF_SIZE];
     snprintf(buf, BUFF_SIZE, "/sys/class/gpio/gpio%d/value", gpio_num);
-    return open(buf, O_WRONLY, S_IWRITE);
+    return open(buf, O_RDWR);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////
@@ -179,13 +183,13 @@ static void GPIO_export_out (int gpio_num)
     assert(export != NULL);
 
     int charWritten = fprintf (export, "%d", gpio_num);
-    assert (charWritten > 0)
+    assert (charWritten > 0);
     fclose (export);
 
     char buf[BUFF_SIZE];
     snprintf(buf, BUFF_SIZE, "/sys/class/gpio/gpio%d/direction", gpio_num);
     FILE *pGpioDirection = fopen(buf, "w");
-    int charWritten = fprintf(pGpioDirection, "%s", "in");
+    charWritten = fprintf(pGpioDirection, "%s", "in");
     assert(charWritten > 0 );
     fclose (pGpioDirection);
 }
@@ -212,10 +216,10 @@ static void LED_clock(void)
 {
     // Bit-bang the clock gpio
     // Notes: Before program writes, must make sure it's on the 0 index
-    lseek(fileDesc_clk, 0, SEEK_SET);
-    write(fileDesc_clk, "1", 1);
-    lseek(fileDesc_clk, 0, SEEK_SET);
-    write(fileDesc_clk, "0", 1);
+    lseek(fileDesc_clock, 0, SEEK_SET);
+    write(fileDesc_clock, "1", 1);
+    lseek(fileDesc_clock, 0, SEEK_SET);
+    write(fileDesc_clock, "0", 1);
 
     return;
 }
@@ -266,18 +270,18 @@ static void LED_setRow(int rowNum)
     // Write on the row pins
     char a_val[2];
     sprintf(a_val, "%d", arr[0]);
-    lseek(fileDesc_a, 0, SEEK_SET);
-    write(fileDesc_a, a_val, 1);
+    lseek(fileDesc_row_a, 0, SEEK_SET);
+    write(fileDesc_row_a, a_val, 1);
 
     char b_val[2];
     sprintf(b_val, "%d", arr[1]);
-    lseek(fileDesc_b, 0, SEEK_SET);
-    write(fileDesc_b, b_val, 1);
+    lseek(fileDesc_row_b, 0, SEEK_SET);
+    write(fileDesc_row_b, b_val, 1);
 
     char c_val[2];
     sprintf(c_val, "%d", arr[2]);
-    lseek(fileDesc_c, 0, SEEK_SET);
-    write(fileDesc_c, c_val, 1);
+    lseek(fileDesc_row_c, 0, SEEK_SET);
+    write(fileDesc_row_c, c_val, 1);
 
 
     return;
