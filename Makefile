@@ -4,7 +4,7 @@
 # Edit this file to compile extra C files into their own programs.
 TARGET= wave_player
 
-SOURCES= $(wildcard *.c)
+SOURCES= led.c
 SOURCES_CPP := $(wildcard *.cpp)
 LIB_BTRACK1 := ./libs/btrack/BTrack.cpp
 LIB_BTRACK2 := ./libs/btrack/OnsetDetectionFunction.cpp
@@ -33,7 +33,6 @@ LFLAGS = -Llibs
 
 # -pg for supporting gprof profiling.
 #CFLAGS += -pg
-
 
 
 all: wav node
