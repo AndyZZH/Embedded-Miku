@@ -155,6 +155,7 @@ void AudioRecorder_init(void) {
     recorder = AudioRecorder();
 }
 
+extern "C"
 short *AudioRecorder_getNextAudioReading(void) {
     return recorder.getNextAudioReading();
 }

@@ -5,16 +5,21 @@
 TARGET= wave_player
 
 SOURCES= led.c
-
+SOURCES_CPP := $(wildcard *.cpp)
+LIB_BTRACK1 := ./libs/btrack/BTrack.cpp
+LIB_BTRACK2 := ./libs/btrack/OnsetDetectionFunction.cpp
+LIB_BTRACK3 := ./libs/btrack/BTrack_wrapper.cpp
 
 PUBDIR = $(HOME)/cmpt433/public/myApps
+OBJDIR = ./obj
+LIBDIR = ./libs/btrack
 OUTDIR = $(PUBDIR)
-CROSS_TOOL = arm-linux-gnueabihf-
+CROSS_TOOL =
 CC_CPP = $(CROSS_TOOL)g++
 CC_C = $(CROSS_TOOL)gcc
 
 CFLAGS = -Wall -g -std=c99 -D _POSIX_C_SOURCE=200809L -Werror
-
+CPPFLAGS =  -c -Wall -g -Werror
 
 # Asound process:
 # get alibsound2 lib on target:
@@ -38,9 +43,13 @@ wav:
 	mkdir -p $(PUBDIR)/beatbox-wav-files/
 	cp beatbox-wav-files/* $(PUBDIR)/beatbox-wav-files/ 
 
-node:
-	mkdir -p $(PUBDIR)/beatbox-server-copy/
-	cp -R server/* $(PUBDIR)/beatbox-server-copy/ 
+bt_lib:
+	$(CC_CPP) $(CPPFLAGS) $(LIB_BTRACK1) -o $(OBJDIR)/BTrack.o -DUSE_KISS_FFT
+	$(CC_CPP) $(CPPFLAGS) $(LIB_BTRACK2) -o $(OBJDIR)/OnsetDetectionFunction.o -DUSE_KISS_FFT
+	$(CC_CPP) $(CPPFLAGS) $(LIB_BTRACK3) -o $(OBJDIR)/BTrack_wrapper.o -DUSE_KISS_FFT
+
+btrack_test: btrack_lib
+	$(CC_C) $(CFLAGS) $(SOURCES) -o $(OUTDIR)/$(TARGET)  $(LFLAGS) -lpthread -lasound
 
 clean:
 	rm -f $(OUTDIR)/$(TARGET)
