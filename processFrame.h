@@ -1,7 +1,6 @@
-// Module to dequeue sound(through AudioRecorder_getNextAudioReading()) and process it
-// 
+// Module to dequeue sound(through AudioRecorder_getNextAudioReading()) and playback
 // If there is beat in the sound
-// 1. void Game_EnqueueBeat(void);
+// * Game_EnqueueBeat()
 #ifndef __PROCESS_FRAME_H
 #define __PROCESS_FRAME_H
 
