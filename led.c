@@ -11,20 +11,20 @@
 #define FILE_NAME_EXPORT "/sys/class/gpio/export"
 #define FILE_NAME_UNEXPORT "/sys/class/gpio/unexport"
 
-#define GPIO_RED1 1 // Upper
-#define GPIO_BLUE1 1
-#define GPIO_GREEN1 1
-#define GPIO_RED2 1 // Under
-#define GPIO_BLUE2 1
-#define GPIO_GREEN2 1
+#define GPIO_RED1 30 // Upper
+#define GPIO_BLUE1 31 
+#define GPIO_GREEN1 60 
+#define GPIO_RED2 48 // Under
+#define GPIO_BLUE2 5 
+#define GPIO_GREEN2 51 
 
-#define GPIO_ROW_A 1
-#define GPIO_ROW_B 1
-#define GPIO_ROW_C 1
+#define GPIO_ROW_A 3 
+#define GPIO_ROW_B 2 
+#define GPIO_ROW_C 49 
 
-#define GPIO_LATCH 1
-#define GPIO_CLOCK 1
-#define GPIO_OE 1
+#define GPIO_LATCH 14 
+#define GPIO_CLOCK 117  
+#define GPIO_OE 115 
 
 #define BUFF_SIZE 64 
 
