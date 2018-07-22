@@ -6,6 +6,14 @@
 #ifndef __LED_H
 #define __LED_H
 
+enum eXBOXButton{
+    XBOX_A,
+    XBOX_B,
+    XBOX_X,
+    XBOX_Y,
+    XBOX_NUM_TYPE // 4 button in total
+};
+
 // export GPIOs and set Directions to out for them
 int LED_init(void);
 
