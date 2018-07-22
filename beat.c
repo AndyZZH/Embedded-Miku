@@ -2,6 +2,13 @@
 #include "beat.h"
 
 #include <stdio.h>
+/*
+ * Function:  Beat_isBeat
+ * --------------------
+ * Function to ouput whether there is beat in a frame
+ *  returns: Boolean
+ */
+
 bool Beat_isBeat(short* frameInShort, int frameSize){
     struct BTrack* bt = newBTrack_hs_fs(frameSize/2, frameSize);
     double frame[frameSize];
