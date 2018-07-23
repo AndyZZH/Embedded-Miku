@@ -4,6 +4,7 @@ extern "C" {
     #include "util.h"
 }
 
+extern "C"
 long long Util_getCurrentTime() {
     using namespace std::chrono;
     using cast = duration<long long>;
