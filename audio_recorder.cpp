@@ -1,4 +1,5 @@
 #include <alsa/asoundlib.h>
+#include <cstdio>
 #include <queue>
 #include <thread>
 
@@ -18,42 +19,24 @@ extern "C" {
 
 class AudioRecorder : public Audio {
 public:
-    AudioRecorder() : Audio();
+    AudioRecorder();
+    ~AudioRecorder();
     short *getNextAudioReading();
 private:
     std::queue<short *> sndQueue;
+    void doThread() override;
 };
 
 
-AudioRecorder::AudioRecorder() {
-    // Open the PCM output
-    int err = snd_pcm_open(&handle, "default", SND_PCM_STREAM_CAPTURE, 0);
-    if (err < 0) {
-        printf("Playback open error: %s\n", snd_strerror(err));
-        exit(EXIT_FAILURE);
-    }
+AudioRecorder::AudioRecorder() : Audio(CAPTURE) {
+    // Launch a new thread to start sampling and push data to queue
+    threadObj = std::thread([this]{ this->doThread(); });
+}
 
-    // Configure parameters of PCM output
-    err = snd_pcm_set_params(handle,
-            SND_PCM_FORMAT_S16_LE,
-            SND_PCM_ACCESS_RW_INTERLEAVED,
-            NUM_CHANNELS,
-            SAMPLE_RATE,
-            1,			// Allow software resampling
-            50000);		// 0.05 seconds per buffer
-    if (err < 0) {
-        printf("Playback open error: %s\n", snd_strerror(err));
-        exit(EXIT_FAILURE);
-    }
 
-    // Allocate this software's playback buffer to be the same size as the
-    // the hardware's playback buffers for efficient data transfers.
-    // ..get info on the hardware buffers:
-    unsigned long unusedBufferSize = 0;
-    snd_pcm_get_params(handle, &unusedBufferSize, &playbackBufferSize);
-
-    // Launch a new thread to start recording and push samples to the queue.
-    threadObj = thread([this]{ this->doThread(); });
+AudioRecorder::~AudioRecorder() {
+    // Intentionally left blank.
+    // Thread joining is processed in the base class. 
 }
 
 
@@ -97,24 +80,29 @@ void AudioRecorder::doThread() {
 
 
 // ----- Adapters to wrap C++ code into C
-static AudioRecorder recorder;
+static AudioRecorder *recorder;
 
 extern "C"
 void AudioRecorder_setVolume(int newVolume) {
-    recorder.setVolume(newVolume);
+    recorder->setVolume(newVolume);
 }
 
 extern "C"
 unsigned long AudioRecorder_getFrameSize(void) {
-    return recorder.getFrameSize();
+    return recorder->getFrameSize();
 }
 
 extern "C"
 void AudioRecorder_init(void) {
-    recorder = AudioRecorder();
+    recorder = new AudioRecorder();
+}
+
+extern "C"
+void AudioRecorder_cleanup(void) {
+    delete recorder;
 }
 
 extern "C"
 short *AudioRecorder_getNextAudioReading(void) {
-    return recorder.getNextAudioReading();
+    return recorder->getNextAudioReading();
 }

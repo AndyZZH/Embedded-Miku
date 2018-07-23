@@ -6,7 +6,7 @@
 // init() must be called before any other functions,
 // cleanup() must be called last to stop recording threads and free memory.
 void AudioRecorder_init(void);
-// void AudioRecorder_cleanup(void);
+void AudioRecorder_cleanup(void);
 
 unsigned long AudioRecorder_getFrameSize(void);
 short *AudioRecorder_getNextAudioReading(void);
