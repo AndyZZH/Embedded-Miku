@@ -52,6 +52,7 @@ static void* displayLoop (void* empty)
     int currentHeight;
     int slot;
     while (running) {
+        LED_clean_display();
         for ( i = 0; i < COMPONENT_MAX_NUM; i++){
             pthread_mutex_lock (*currentComponentLock);
             {
@@ -72,7 +73,6 @@ static void* displayLoop (void* empty)
             }
         } 
         LED_refresh();
-        LED_clearCanvas();
     }
     printf ( "stop displaying loop \n");
 }
@@ -80,7 +80,8 @@ static void* displayLoop (void* empty)
 void Display_cleanup(void)
 {
     running = false;
-    pthread_join (displayHtread, NULL);
+    pthread_join (displayThread, NULL);
+    LED_cleanup();
 }
 
 void Display_generateComponent(int button)

@@ -48,14 +48,6 @@ static int fileDesc_oe;
 // LED values for display
 static int screen[16][32];
 
-const static struct {
-    int x1;
-    int x2;
-    int y1;
-    int y2;
-    int color;    
-} current_displaying_component[SLOT_NUM];
-
 // function declartionas ----------------------------
 // Beaglebone GPIO
 static int fileDesc_opener(int gpio_num);
@@ -83,15 +75,8 @@ int LED_init (void)
 
 void LED_cleanup(void)
 {
-    // clean up the screen
     memset(screen, 0, sizeof(screen));
     LED_refresh();
-    return;
-}
-
-void LED_clearCamvas(void)
-{
-    memset(screen, 0, sizeof(screen));
     return;
 }
 
