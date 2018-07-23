@@ -22,11 +22,10 @@ void Game_EnqueueBeat(void);
 /*
  * Function:  Game_EnqueueBeat()
  * --------------------
- *                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
  * 
  *  returns: delayTime
  */
-long Game_getDelayTime(void);
+long long Game_getDelayTime(void);
 
 /*
  * Function:  Game_checkBeat()
@@ -39,5 +38,7 @@ long Game_getDelayTime(void);
  *  returns: void
  */
 void Game_checkBeat(int button_id);
+
+int Game_getScore();
 
 #endif
