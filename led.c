@@ -27,6 +27,7 @@
 #define GPIO_OE 115 
 
 #define BUFF_SIZE 64 
+#define SLOT_NUM  4
 
 static int fileDesc_red1;
 static int fileDesc_blue1;
@@ -47,11 +48,21 @@ static int fileDesc_oe;
 // LED values for display
 static int screen[16][32];
 
-// function declartionas
+const static struct {
+    int x1;
+    int x2;
+    int y1;
+    int y2;
+    int color;    
+} current_displaying_component[SLOT_NUM];
+
+// function declartionas ----------------------------
+// Beaglebone GPIO
 static int fileDesc_opener(int gpio_num);
 static void GPIO_setPins(void);
 static void GPIO_export_out(int gpio_num);
 
+// control LED
 static void LED_setPixel(int r, int c, int color);
 static void LED_clock(void);
 static void LED_latch(void);
@@ -78,12 +89,18 @@ void LED_cleanup(void)
     return;
 }
 
+void LED_clearCamvas(void)
+{
+    memset(screen, 0, sizeof(screen));
+    return;
+}
+
 void LED_display_rectangle(int x1, int y1, int x2, int y2, int color)
 {
-    assert ( 0 <= x1 && x1 < 32);
-    assert ( 0 <= x2 && x2 < 32);
-    assert ( 0 <= y1 && y1 < 16);
-    assert ( 0 <= y2 && y2 < 16);
+    assert ( 0 <= x1 && x1 <= 31);
+    assert ( 0 <= x2 && x2 <= 31);
+    assert ( 0 <= y1 && y1 <= 15);
+    assert ( 0 <= y2 && y2 <= 15);
 
 
     int min_x;
@@ -110,8 +127,8 @@ void LED_display_rectangle(int x1, int y1, int x2, int y2, int color)
         max_y = y1;
     }
 
-    for (int i = min_x; i <  max_x; i++ )
-        for (int j = min_y; j < max_y; j++)
+    for (int i = min_x; i <=  max_x; i++ )
+        for (int j = min_y; j <= max_y; j++)
             LED_setPixel(i,j,color);
 
     return;

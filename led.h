@@ -11,6 +11,8 @@ int LED_init(void);
 
 void LED_cleanup(void);
 
+void LED_clearCanvas(void);
+
 // display rectangle on LED
 // @params:
 //      two vertexs for diagonal of the rectangle
