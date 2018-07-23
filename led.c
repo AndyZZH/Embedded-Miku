@@ -11,22 +11,23 @@
 #define FILE_NAME_EXPORT "/sys/class/gpio/export"
 #define FILE_NAME_UNEXPORT "/sys/class/gpio/unexport"
 
-#define GPIO_RED1 1 // Upper
-#define GPIO_BLUE1 1
-#define GPIO_GREEN1 1
-#define GPIO_RED2 1 // Under
-#define GPIO_BLUE2 1
-#define GPIO_GREEN2 1
+#define GPIO_RED1 30 // Upper
+#define GPIO_BLUE1 31 
+#define GPIO_GREEN1 60 
+#define GPIO_RED2 48 // Under
+#define GPIO_BLUE2 5 
+#define GPIO_GREEN2 51 
 
-#define GPIO_ROW_A 1
-#define GPIO_ROW_B 1
-#define GPIO_ROW_C 1
+#define GPIO_ROW_A 3 
+#define GPIO_ROW_B 2 
+#define GPIO_ROW_C 49 
 
-#define GPIO_LATCH 1
-#define GPIO_CLOCK 1
-#define GPIO_OE 1
+#define GPIO_LATCH 14 
+#define GPIO_CLOCK 117  
+#define GPIO_OE 115 
 
 #define BUFF_SIZE 64 
+#define SLOT_NUM  4
 
 static int fileDesc_red1;
 static int fileDesc_blue1;
@@ -47,11 +48,13 @@ static int fileDesc_oe;
 // LED values for display
 static int screen[16][32];
 
-// function declartionas
+// function declartionas ----------------------------
+// Beaglebone GPIO
 static int fileDesc_opener(int gpio_num);
 static void GPIO_setPins(void);
 static void GPIO_export_out(int gpio_num);
 
+// control LED
 static void LED_setPixel(int r, int c, int color);
 static void LED_clock(void);
 static void LED_latch(void);
@@ -72,7 +75,6 @@ int LED_init (void)
 
 void LED_cleanup(void)
 {
-    // clean up the screen
     memset(screen, 0, sizeof(screen));
     LED_refresh();
     return;
@@ -80,10 +82,10 @@ void LED_cleanup(void)
 
 void LED_display_rectangle(int x1, int y1, int x2, int y2, int color)
 {
-    assert ( 0 <= x1 && x1 < 32);
-    assert ( 0 <= x2 && x2 < 32);
-    assert ( 0 <= y1 && y1 < 16);
-    assert ( 0 <= y2 && y2 < 16);
+    assert ( 0 <= x1 && x1 <= 31);
+    assert ( 0 <= x2 && x2 <= 31);
+    assert ( 0 <= y1 && y1 <= 15);
+    assert ( 0 <= y2 && y2 <= 15);
 
 
     int min_x;
@@ -110,8 +112,8 @@ void LED_display_rectangle(int x1, int y1, int x2, int y2, int color)
         max_y = y1;
     }
 
-    for (int i = min_x; i <  max_x; i++ )
-        for (int j = min_y; j < max_y; j++)
+    for (int i = min_x; i <=  max_x; i++ )
+        for (int j = min_y; j <= max_y; j++)
             LED_setPixel(i,j,color);
 
     return;

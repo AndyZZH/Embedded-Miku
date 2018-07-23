@@ -22,7 +22,6 @@ void Game_EnqueueBeat(void);
 /*
  * Function:  Game_EnqueueBeat()
  * --------------------
- *                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
  * 
  *  returns: delayTime
  */
