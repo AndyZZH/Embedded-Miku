@@ -1,4 +1,5 @@
 #include <pthread.h>
+#include <time.h>
 #include <stdbool.h>
 #include "led.h"
 
@@ -23,12 +24,13 @@ static int color_mapping[COLOR_MAPPING_SIZE] = { 2, 1, 4, 3 }  //index : contoro
 static pthread_t displayThread;
 static pthread_mutex_t currentComponentLock = PTHREAD_MUTEX_INITIALIZER;
 static bool running;
+static long totalDelay;
 
 static component currentComponent[COMPONENT_MAX_NUM];
 
 static void* displayLoop (void *);
 
-int Display_init (void)
+int Display_init (int delayTimeInMs)
 {
     if ( LED_init() )
         return 1;
@@ -39,6 +41,8 @@ int Display_init (void)
     } 
 
     running = true;
+    totalDelay = delayTimeInMs *1000000 ; 
+
     int threadCreateResult = pthread_create (&displayThread, NULL, displayLoop, NULL);
     return threadCreateResult;
 }
@@ -47,13 +51,17 @@ int Display_init (void)
 static void* displayLoop (void* empty)
 {
     printf ( "start displaying loop \n");
-    int i;
+
+    struct timespec reqtime;
+    reqtime.tv_sec = totalDelay / 1000000000; 
+    reqtime.tv_nsec = totalDelay % 1000000000; 
+
     int width = DISPLAY_WIDTH / COMPONENT_NUM;
     int currentHeight;
     int slot;
     while (running) {
         LED_clean_display();
-        for ( i = 0; i < COMPONENT_MAX_NUM; i++){
+        for (int i = 0; i < COMPONENT_MAX_NUM; i++){
             pthread_mutex_lock (*currentComponentLock);
             {
                 currentHeight = currentComponent[i].height; 
@@ -73,6 +81,7 @@ static void* displayLoop (void* empty)
             }
         } 
         LED_refresh();
+        nanosleep(&reqtime, NULL); 
     }
     printf ( "stop displaying loop \n");
 }

@@ -1,7 +1,15 @@
 #ifndef __DISPLAY_H
 #define __DISPLAY_H
 
-int Didsplay_init(void);
+/*
+ * Function: Display_init()
+ * -------------------------
+ *  init Display
+ *
+ *  @ delaytime : the period which it takes for the component to reach its destination and disapper
+ */
+int Didsplay_init(int delaytime);
+
 void Display_cleanup(void);
 
 /*
