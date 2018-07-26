@@ -9,7 +9,16 @@
  *  returns: void
  */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 void Playback_init(void);
 void Playback_cleanup(void);
 void Playback_playWithDelay(short* frame, int frameSize, long delayTime);
+
+#ifdef __cplusplus
+}
+#endif
+
 #endif
