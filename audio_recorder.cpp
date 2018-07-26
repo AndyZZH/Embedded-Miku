@@ -19,10 +19,10 @@ class AudioRecorder : public Audio {
 public:
     AudioRecorder();
     ~AudioRecorder();
-    std::unique_ptr<short[]> getNextAudioReading();
+    short *getNextAudioReading();
 private:
     std::mutex soundQueueMutex;
-    std::queue<std::unique_ptr<short[]>> sndQueue;
+    std::queue<short*> sndQueue;
     void doThread() override;
 };
 
@@ -39,10 +39,10 @@ AudioRecorder::~AudioRecorder() {
 }
 
 
-std::unique_ptr<short[]> AudioRecorder::getNextAudioReading() {
+short *AudioRecorder::getNextAudioReading() {
     std::lock_guard<std::mutex> guard(soundQueueMutex);
     if (!sndQueue.empty()) {
-        auto returnVal = std::move(sndQueue.front());
+        short *returnVal = sndQueue.front();
         sndQueue.pop();
         return returnVal;
     } else {
@@ -76,8 +76,7 @@ void AudioRecorder::doThread() {
 
         // Push the pointer of data to the queue
         std::lock_guard<std::mutex> guard(soundQueueMutex);
-        std::unique_ptr<short[]> buffer_unique_ptr(buffer);
-        sndQueue.push(std::move(buffer_unique_ptr));
+        sndQueue.push(buffer);
     }
 }
 
@@ -107,5 +106,5 @@ void AudioRecorder_cleanup(void) {
 
 extern "C"
 short *AudioRecorder_getNextAudioReading(void) {
-    return recorder->getNextAudioReading().get();
+    return recorder->getNextAudioReading();
 }
