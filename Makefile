@@ -29,7 +29,7 @@ CPPFLAGS = -Wall -g -std=c++11 -Werror
 #      to host  ~/public/asound_lib_BBB/libasound.so
 # Copy to just base library:
 
-LFLAGS = -L$(LIBDIR)
+LFLAGS = -L$(LIBDIR) -lpthread -lasound -lbtrack -lsamplerate
 
 
 # -pg for supporting gprof profiling.
@@ -42,9 +42,11 @@ LFLAGS = -L$(LIBDIR)
 # variables used in this script: $^, $<, $@
 
 
-all: bt_lib setup_folders $(C_OBJS) $(CPP_OBJS)
-	$(LD) $^ -o $(OUTDIR)/$(TARGET)  $(LFLAGS) -lpthread -lasound
+all: bt_lib setup_folders compile
 
+compile: $(C_OBJS) $(CPP_OBJS)
+	$(LD) $^ -o $(OUTDIR)/$(TARGET) $(LFLAGS)
+	cp $(LIBDIR)/*.so $(OUTDIR)
 
 # Pattern to match cpp files and use g++ to compile
 $(OBJDIR)/%.o: %.cpp
@@ -56,6 +58,7 @@ $(OBJDIR)/%.o: %.c
 
 setup_folders:
 	mkdir -p obj
+	mkdir -p bin
 
 bt_lib:
 	make --directory $(LIBDIR)/btrack CROSS_TOOL=$(CROSS_TOOL)
