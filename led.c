@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <stdbool.h>
+#include <pthread.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
@@ -11,20 +13,20 @@
 #define FILE_NAME_EXPORT "/sys/class/gpio/export"
 #define FILE_NAME_UNEXPORT "/sys/class/gpio/unexport"
 
-#define GPIO_RED1 30 // Upper
-#define GPIO_BLUE1 31 
-#define GPIO_GREEN1 60 
-#define GPIO_RED2 48 // Under
-#define GPIO_BLUE2 5 
-#define GPIO_GREEN2 51 
+#define GPIO_RED1 86 // Upper
+#define GPIO_BLUE1 87 
+#define GPIO_GREEN1 88 
+#define GPIO_RED2 10 // Under
+#define GPIO_BLUE2 11 
+#define GPIO_GREEN2 9 
 
-#define GPIO_ROW_A 3 
-#define GPIO_ROW_B 2 
-#define GPIO_ROW_C 49 
+#define GPIO_ROW_A 8 
+#define GPIO_ROW_B 80 
+#define GPIO_ROW_C 78 
 
-#define GPIO_LATCH 14 
-#define GPIO_CLOCK 117  
-#define GPIO_OE 115 
+#define GPIO_LATCH 77 
+#define GPIO_CLOCK 76  
+#define GPIO_OE 74 
 
 #define BUFF_SIZE 64 
 #define SLOT_NUM  4
@@ -45,8 +47,14 @@ static int fileDesc_clock;
 static int fileDesc_latch;
 static int fileDesc_oe;
 
+struct timespec reqtime;
+
 // LED values for display
-static int screen[16][32];
+static int screen[32][16];
+
+static pthread_t refreshThread;
+static pthread_mutex_t screenLock = PTHREAD_MUTEX_INITIALIZER;
+static bool running;
 
 // function declartionas ----------------------------
 // Beaglebone GPIO
@@ -63,19 +71,33 @@ static void LED_setRow(int rowNum);
 static void LED_setColourTop(int colour);
 static void LED_setColourBottom(int colour);
 static void LED_refresh(void);
+static void* refreshLoop (void*);
 
 int LED_init (void)
 {
     GPIO_setPins();
-    // clean up the screen
-    memset(screen, 0, sizeof(screen));
-    LED_refresh();
-    return 0;
+    for( int i = 0; i < 32; i++)
+        for (int j = 0; j < 16; j++)
+                screen[i][j] = 0;
+    running = true;
+    int threadCreateResult = pthread_create( &refreshThread, NULL, refreshLoop, NULL);
+    return threadCreateResult;
+}
+
+static void* refreshLoop (void* empty)
+{
+    int i;
+    while (running) {
+        LED_refresh();
+    }
+    return NULL;
 }
 
 void LED_cleanup(void)
 {
-    memset(screen, 0, sizeof(screen));
+    running = false;
+    pthread_join (refreshThread, NULL);
+    LED_clean_display();
     LED_refresh();
     return;
 }
@@ -191,7 +213,7 @@ static void GPIO_export_out (int gpio_num)
     char buf[BUFF_SIZE];
     snprintf(buf, BUFF_SIZE, "/sys/class/gpio/gpio%d/direction", gpio_num);
     FILE *pGpioDirection = fopen(buf, "w");
-    charWritten = fprintf(pGpioDirection, "%s", "in");
+    charWritten = fprintf(pGpioDirection, "%s", "out");
     assert(charWritten > 0 );
     fclose (pGpioDirection);
 }
@@ -207,7 +229,11 @@ static void GPIO_export_out (int gpio_num)
 */
 static void LED_setPixel(int r, int c, int color)
 {
-    screen[r][c] = color;
+    pthread_mutex_lock (&screenLock);
+    {
+        screen[r][c] = color;
+    }
+    pthread_mutex_unlock (&screenLock);
     return;
 }
 
@@ -352,19 +378,30 @@ static void LED_setColourBottom(int colour)
  */
 static void LED_refresh(void)
 {
+    
+    
     for ( int rowNum = 0; rowNum < 8; rowNum++ ) {
         lseek(fileDesc_oe, 0, SEEK_SET);
         write(fileDesc_oe, "1", 1); 
         LED_setRow(rowNum);
         for ( int colNum = 0; colNum < 32;  colNum++) {
-            LED_setColourTop(screen[colNum][rowNum]);
-            LED_setColourBottom(screen[colNum][rowNum+8]);
+            int top;
+            int bottom;
+            pthread_mutex_lock (&screenLock);
+            {
+                top = screen[colNum][rowNum];
+                bottom = screen[colNum][rowNum+8];
+            }
+            pthread_mutex_unlock (&screenLock);
+            
+            LED_setColourTop(top);
+            LED_setColourBottom(bottom);
             LED_clock();
         }
         LED_latch();
         lseek(fileDesc_oe, 0, SEEK_SET);
         write(fileDesc_oe, "0", 1); 
-        //sleep_usec(DELAY_IN_US); // Sleep for delay
+        usleep(5);
     }
     return;
 }

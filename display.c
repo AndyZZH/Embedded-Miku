@@ -1,10 +1,11 @@
 #include <pthread.h>
+#include <stdio.h>
 #include <time.h>
 #include <stdbool.h>
 #include "led.h"
 
-#define COMPONNET_MAX_NUM 20 
-#define DISPLAY_WIDTH 16
+#define COMPONENT_MAX_NUM 5 
+#define DISPLAY_WIDTH 32 
 #define COLOR_MAPPING_SIZE 4
 
 /*
@@ -19,7 +20,7 @@ typedef struct {
     int height;
 } component; 
 
-static int color_mapping[COLOR_MAPPING_SIZE] = { 2, 1, 4, 3 }  //index : contoroller button number & SLOT number
+static int color_mapping[COLOR_MAPPING_SIZE] = { 2, 1, 4, 3 };  //index : contoroller button number & SLOT number
 
 static pthread_t displayThread;
 static pthread_mutex_t currentComponentLock = PTHREAD_MUTEX_INITIALIZER;
@@ -32,14 +33,10 @@ static void* displayLoop (void *);
 
 int Display_init (int delayTimeInMs)
 {
-    if ( LED_init() )
-        return 1;
-    
-    for (int i = 0; i < COMPONNET_MAX_NUM; i++){
+    for (int i = 0; i < COMPONENT_MAX_NUM; i++){
         currentComponent[i].height = -1;
         currentComponent[i].slot = -1;
     } 
-
     running = true;
     totalDelay = delayTimeInMs *1000000 ; 
 
@@ -56,31 +53,32 @@ static void* displayLoop (void* empty)
     reqtime.tv_sec = totalDelay / 1000000000; 
     reqtime.tv_nsec = totalDelay % 1000000000; 
 
-    int width = DISPLAY_WIDTH / COMPONENT_NUM;
+    int width = DISPLAY_WIDTH / 4;
     int currentHeight;
     int slot;
     while (running) {
         LED_clean_display();
+        
         for (int i = 0; i < COMPONENT_MAX_NUM; i++){
-            pthread_mutex_lock (*currentComponentLock);
+            pthread_mutex_lock (&currentComponentLock);
             {
                 currentHeight = currentComponent[i].height; 
                 slot = currentComponent[i].slot;
             }
-            pthread_mutex_unlock (*currentComponentLock);
+            pthread_mutex_unlock (&currentComponentLock);
 
             if ( currentHeight >= 16)
-                currentHeight = -1;
+                currentComponent[i].height = -1;
 
             if ( currentHeight >=0 ){
-                LED_display_rectangle(slot*4, currentHeight, slot*4 + width-1, currentHeight, color_mapping[slot]); 
+                //LED_display_rectangle(slot*8, currentHeight, slot*8 + width-1, currentHeight, 2); 
+                LED_display_rectangle(slot*8, currentHeight, slot*8 + width-1, (currentHeight+1)%16, color_mapping[currentComponent[i].slot] );
                 currentComponent[i].height++;
                 if (currentComponent[i].height >= 16){
-                    currentComponent = -1;
+                    currentComponent[i].height = -1;
                 } 
             }
         } 
-        LED_refresh();
         nanosleep(&reqtime, NULL); 
     }
     printf ( "stop displaying loop \n");
@@ -93,9 +91,11 @@ void Display_cleanup(void)
     LED_cleanup();
 }
 
-void Display_generateComponent(int button)
+void Display_generateComponent (int button)
 {
-    pthread_mutex_lock (*currentComponentLock);
+    if (button > 3 || button < 0)
+        return;
+    pthread_mutex_lock (&currentComponentLock);
     {
         for (int i = 0; i < COMPONENT_MAX_NUM; i++){
             if (currentComponent[i].height == -1){
@@ -105,6 +105,6 @@ void Display_generateComponent(int button)
             }
         }
     }
-    pthread_mutex_unlock (*currentComponentLock);
+    pthread_mutex_unlock (&currentComponentLock);
     return;
 }

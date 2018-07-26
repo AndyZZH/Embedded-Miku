@@ -2,9 +2,9 @@
 # by Brian Fraser
 
 # Edit this file to compile extra C files into their own programs.
-TARGET= wave_player
+TARGET= led_test
 
-SOURCES= led.c
+SOURCES= display.c led.c main.c
 SOURCES_CPP := $(wildcard *.cpp)
 LIB_BTRACK1 := ./libs/btrack/BTrack.cpp
 LIB_BTRACK2 := ./libs/btrack/OnsetDetectionFunction.cpp
@@ -14,7 +14,7 @@ PUBDIR = $(HOME)/cmpt433/public/myApps
 OBJDIR = ./obj
 LIBDIR = ./libs/btrack
 OUTDIR = $(PUBDIR)
-CROSS_TOOL =
+CROSS_TOOL = arm-linux-gnueabihf-
 CC_CPP = $(CROSS_TOOL)g++
 CC_C = $(CROSS_TOOL)gcc
 
@@ -50,6 +50,9 @@ bt_lib:
 
 btrack_test: btrack_lib
 	$(CC_C) $(CFLAGS) $(SOURCES) -o $(OUTDIR)/$(TARGET)  $(LFLAGS) -lpthread -lasound
+
+led_test:
+	$(CC_C) $(CFAGS) $(SOURCES) -o $(OUTDIR)/$(TARGET) -lpthread
 
 clean:
 	rm -f $(OUTDIR)/$(TARGET)

@@ -8,7 +8,7 @@
  *
  *  @ delaytime : the period which it takes for the component to reach its destination and disapper
  */
-int Didsplay_init(int delaytime);
+int Display_init(int delaytime);
 
 void Display_cleanup(void);
 
@@ -25,4 +25,5 @@ void Display_cleanup(void);
  *      - 2 : X (Blue)
  *      - 3 : Y (Yellow)
  */
-void Display_generateComponenet(int button);
+void Display_generateComponent(int button);
+#endif
