@@ -82,6 +82,8 @@ static void* displayLoop (void* empty)
         nanosleep(&reqtime, NULL); 
     }
     printf ( "stop displaying loop \n");
+
+    return NULL;
 }
 
 void Display_cleanup(void)
