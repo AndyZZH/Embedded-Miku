@@ -215,10 +215,9 @@ void Playback_cleanup(void) {
 
 extern "C"
 void Playback_playWithDelay(short* frame, int frameSize, long delayTime) {
-    wavedata_t temp { frame, frameSize };
-
     // Create a new thread for delayed queueing wavedata
-    std::thread([&]{
+    std::thread([=]{
+        wavedata_t temp { frame, frameSize };
         using namespace std;
         this_thread::sleep_for(chrono::milliseconds(delayTime));
         player->queueSound(&temp); 
