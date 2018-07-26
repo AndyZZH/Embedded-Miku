@@ -9,7 +9,6 @@
 
 #define SAMPLE_RATE 44100
 #define NUM_CHANNELS 1
-#define SAMPLE_SIZE (sizeof(short)) 
 
 enum AudioMode {
     CAPTURE, 
