@@ -15,7 +15,6 @@
 #define DEFAULT_SCORE 0 //default react time +- 0.25s 
 
 // prototype
-static void* game(void* arg);
 
 static int score = DEFAULT_SCORE;
 static long long delayTime = DEFAULT_DELAY_TIMEms;
@@ -24,7 +23,7 @@ static long long beatQueue[XBOX_NUM_TYPE];
 
 void Game_init(void){
     srand(time(NULL));
-    for (int i = 0; i ++; i < XBOX_NUM_TYPE){
+    for (int i = 0; i < XBOX_NUM_TYPE; i++){
         beatQueue[i] = 0;
     }
 }
