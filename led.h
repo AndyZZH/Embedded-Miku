@@ -16,7 +16,7 @@ void LED_cleanup(void);
 //      two vertexs for diagonal of the rectangle
 //      (x1, y1) : one of Vertex for rectangle
 //      (x2, y2) : the other vertex for rectangle 
-void LED_display_rectagle(int x1, int y1, int x2, int y2, int color);
+void LED_display_rectangle(int x1, int y1, int x2, int y2, int color);
 
 // Clean up LED 
 void LED_clean_display(void);
