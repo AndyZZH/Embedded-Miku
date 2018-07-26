@@ -1,5 +1,6 @@
 #include <alsa/asoundlib.h>
 #include <cstdio>
+#include <mutex>
 #include <queue>
 #include <thread>
 
@@ -23,6 +24,7 @@ public:
     ~AudioRecorder();
     short *getNextAudioReading();
 private:
+    std::mutex soundQueueMutex;
     std::queue<short *> sndQueue;
     void doThread() override;
 };
@@ -41,6 +43,7 @@ AudioRecorder::~AudioRecorder() {
 
 
 short *AudioRecorder::getNextAudioReading() {
+    std::lock_guard<std::mutex> guard(soundQueueMutex);
     if (!sndQueue.empty()) {
         short *returnVal = sndQueue.front();
         sndQueue.pop();
@@ -74,6 +77,7 @@ void AudioRecorder::doThread() {
         }
 
         // Push the pointer of data to the queue
+        std::lock_guard<std::mutex> guard(soundQueueMutex);
         sndQueue.push(buffer);
     }
 }
