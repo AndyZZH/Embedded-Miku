@@ -67,4 +67,5 @@ btrack_test: btrack_lib
 	$(CC_C) $(CFLAGS) $(SOURCES) -o $(OUTDIR)/$(TARGET)  $(LFLAGS) -lpthread -lasound
 
 clean:
-	rm -f $(OUTDIR)/$(TARGET)
+	rm -rf $(OBJDIR)
+	rm -rf $(OUTDIR)
