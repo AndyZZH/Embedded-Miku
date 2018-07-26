@@ -1,21 +1,18 @@
-// Record sounds from microphone jack in real time. The library will use a linked list
-// as its internal data structure. 
+// Module to play a static demo audio file
 #ifndef _AUDIO_RECORDER_H_
 #define _AUDIO_RECORDER_H_
 
-// init() must be called before any other functions,
-// cleanup() must be called last to stop recording threads and free memory.
+typedef struct {
+	int numSamples;
+	short *pData;
+} wavedata_t;
+
 void AudioRecorder_init(void);
 void AudioRecorder_cleanup(void);
-
 unsigned long AudioRecorder_getFrameSize(void);
 short *AudioRecorder_getNextAudioReading(void);
 
-// Get/set the volume.
-// setVolume() function posted by StackOverflow user "trenki" at:
-// http://stackoverflow.com/questions/6787318/set-alsa-master-volume-from-c-code
-int  AudioRecorder_getVolume(void);
-void AudioRecorder_setVolume(int newVolume);
+// int  AudioRecorder_getVolume(void);
+// void AudioRecorder_setVolume(int newVolume);
 
 #endif
-
