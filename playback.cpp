@@ -198,15 +198,16 @@ void AudioPlayer::doThread() {
 
         // Check for (and handle) possible error conditions on output
         if (frames < 0) {
-            fprintf(stderr, "AudioMixer: writei() returned %li\n", frames);
+        fprintf(stderr, "[AudioPlayback]: writei() returned %li\n", frames);
             frames = snd_pcm_recover(handle, frames, 1);
         }
         if (frames < 0) {
-            fprintf(stderr, "ERROR: Failed writing audio with snd_pcm_writei(): %li\n", frames);
+        fprintf(stderr, "[AudioPlayback] ERROR: Failed writing audio with snd_pcm_writei(): %li\n", frames);
             exit(EXIT_FAILURE);
         }
         if (frames > 0 && (unsigned long) frames < playbackBufferSize) {
-            printf("Short write (expected %li, wrote %li)\n", playbackBufferSize, frames);
+        printf("[AudioPlayback] Short write (expected %li, wrote %li)\n", playbackBufferSize, frames);
+    }
         }
 
         delete[] playbackBuffer;
