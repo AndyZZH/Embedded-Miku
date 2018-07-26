@@ -42,7 +42,7 @@ LFLAGS = -L$(LIBDIR)/x86-linux -L$(LIBDIR)/arm-linux -lpthread -lasound -lbtrack
 # variables used in this script: $^, $<, $@
 
 
-all: bt_lib setup_folders compile
+all: setup_folders compile
 
 compile: $(C_OBJS) $(CPP_OBJS)
 	$(LD) $^ -o $(OUTDIR)/$(TARGET) $(LFLAGS)
