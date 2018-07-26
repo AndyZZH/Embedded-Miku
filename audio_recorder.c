@@ -38,4 +38,4 @@ short *AudioRecorder_getNextAudioReading(void){
     return demoWaveFile->pData[current];
 }
 
-static void* staticAudioThread(void* arg){}
+// static void* staticAudioThread(void* arg){}
