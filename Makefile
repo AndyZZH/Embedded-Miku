@@ -74,7 +74,7 @@ btrack_test: btrack_lib
 	$(CC_C) $(CFLAGS) $(SOURCES) -o $(OUTDIR)/$(TARGET)  $(LFLAGS) -lpthread -lasound
 
 led_test:
-	$(CC_C) $(CFAGS) $(SOURCES_LED_TEST) -o $(OUTDIR_LED_TEST)/$(TARGET_LED_TEST) -lpthread
+	$(CC_C) $(CFLAGS) $(SOURCES_LED_TEST) -o $(OUTDIR_LED_TEST)/$(TARGET_LED_TEST) -lpthread
 
 clean:
 	rm -rf $(OBJDIR)

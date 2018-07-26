@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <pthread.h>
+#include <time.h>
 #include <stdlib.h>
-#include <unistd.h>
 #include <string.h>
 #include <unistd.h>
 #include <fcntl.h>
@@ -86,7 +86,6 @@ int LED_init (void)
 
 static void* refreshLoop (void* empty)
 {
-    int i;
     while (running) {
         LED_refresh();
     }
@@ -378,7 +377,9 @@ static void LED_setColourBottom(int colour)
  */
 static void LED_refresh(void)
 {
-    
+    struct timespec reqtime;
+    reqtime.tv_sec = 0; 
+    reqtime.tv_nsec = 5 * 1000000; 
     
     for ( int rowNum = 0; rowNum < 8; rowNum++ ) {
         lseek(fileDesc_oe, 0, SEEK_SET);
@@ -401,7 +402,7 @@ static void LED_refresh(void)
         LED_latch();
         lseek(fileDesc_oe, 0, SEEK_SET);
         write(fileDesc_oe, "0", 1); 
-        usleep(5);
+        nanosleep(&reqtime, NULL); 
     }
     return;
 }
