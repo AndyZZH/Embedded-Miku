@@ -1,0 +1,1 @@
+/usr/bin/cc     CMakeFiles/streaming_test.dir/tests/streaming_test.c.o CMakeFiles/streaming_test.dir/tests/util.c.o CMakeFiles/streaming_test.dir/tests/calc_snr.c.o  -o streaming_test -rdynamic libsamplerate.so -lm -Wl,-rpath,/home/andy/Embedded-Miku/libsamplerate/build_s 
