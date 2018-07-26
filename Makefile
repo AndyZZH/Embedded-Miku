@@ -9,8 +9,10 @@ LIBDIR = libs
 OUTDIR = bin
 
 C_FILES = $(wildcard *.c)
+C_OBJS = $(addprefix $(OBJDIR)/, $(C_FILES:.c=.o))
 CPP_FILES = $(wildcard *.cpp)
-OBJ_FILES = $(wildcard $(OBJDIR)/*.o)
+CPP_OBJS = $(addprefix $(OBJDIR)/, $(CPP_FILES:.cpp=.o))
+
 
 CROSS_TOOL =
 CC_CPP = $(CROSS_TOOL)g++
@@ -40,17 +42,20 @@ LFLAGS = -L$(LIBDIR)
 # variables used in this script: $^, $<, $@
 
 
-all: bt_lib $(CPP_FILES) $(C_FILES)
+all: bt_lib setup_folders $(C_OBJS) $(CPP_OBJS)
 	$(LD) $^ -o $(OUTDIR)/$(TARGET)  $(LFLAGS) -lpthread -lasound
 
 
-# Compile all cpp files
-$(C_FILES): $(OBJDIR)/%.o: %.c
+# Pattern to match cpp files and use g++ to compile
+$(OBJDIR)/%.o: %.cpp
 	$(CC_CPP) $(CPPFLAGS) -c $< -o $@
 
-# Compile all c files
-$(CPP_FILES): $(OBJDIR)/%.o: %.cpp
+# Pattern to match c files and use gcc to compile
+$(OBJDIR)/%.o: %.c
 	$(CC_C) $(CFLAGS) -c $< -o $@
+
+setup_folders:
+	mkdir -p obj
 
 bt_lib:
 	make --directory $(LIBDIR)/btrack CROSS_TOOL=$(CROSS_TOOL)
