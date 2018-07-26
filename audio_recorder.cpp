@@ -5,10 +5,7 @@
 #include <thread>
 
 #include "audio.h"
-
-extern "C" {
-    #include "audio_recorder.h"
-}
+#include "audio_recorder.h"
 
 
 #define DEFAULT_VOLUME 80

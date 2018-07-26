@@ -3,10 +3,7 @@
 #include <mutex>
 
 #include "audio.h"
-
-extern "C" {
-    #include "playback.h"
-}
+#include "playback.h"
 
 #define MAX_SOUND_BITES 30
 
