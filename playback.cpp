@@ -11,7 +11,7 @@ public:
     AudioPlayer();
     ~AudioPlayer();
 
-    void play(short* frame, int frameSize);
+    void play(double* frame, int frameSize);
 private:
     // std::mutex audioMutex;
     void doThread() override;
@@ -30,7 +30,7 @@ AudioPlayer::~AudioPlayer() {
 }
 
 
-void AudioPlayer::play(short* frame, int frameSize) {
+void AudioPlayer::play(double* frame, int frameSize) {
     // Output the audio
     snd_pcm_sframes_t frames = snd_pcm_writei(handle, frame, frameSize);
 
@@ -67,7 +67,7 @@ void Playback_cleanup(void) {
 }
 
 extern "C"
-void Playback_playWithDelay(short* frame, int frameSize, long delayTime) {
+void Playback_playWithDelay(double* frame, int frameSize, long delayTime) {
     // Create a new thread for delayed queueing wavedata
     std::thread([=]{
         using namespace std;
