@@ -22,10 +22,10 @@ class AudioRecorder : public Audio {
 public:
     AudioRecorder();
     ~AudioRecorder();
-    short *getNextAudioReading();
+    std::unique_ptr<short[]> getNextAudioReading();
 private:
     std::mutex soundQueueMutex;
-    std::queue<short *> sndQueue;
+    std::queue<std::unique_ptr<short[]>> sndQueue;
     void doThread() override;
 };
 
@@ -42,10 +42,10 @@ AudioRecorder::~AudioRecorder() {
 }
 
 
-short *AudioRecorder::getNextAudioReading() {
+std::unique_ptr<short[]> AudioRecorder::getNextAudioReading() {
     std::lock_guard<std::mutex> guard(soundQueueMutex);
     if (!sndQueue.empty()) {
-        short *returnVal = sndQueue.front();
+        auto returnVal = std::move(sndQueue.front());
         sndQueue.pop();
         return returnVal;
     } else {
@@ -59,6 +59,7 @@ void AudioRecorder::doThread() {
     while (true) {
         // Create a new array to store read samples
         short *buffer = new short[playbackBufferSize];
+        // std::unique_ptr<short[]> buffer(new short[playbackBufferSize]);
 
         // Read the audio
         snd_pcm_sframes_t frames = snd_pcm_readi(handle, buffer, playbackBufferSize);
@@ -78,7 +79,8 @@ void AudioRecorder::doThread() {
 
         // Push the pointer of data to the queue
         std::lock_guard<std::mutex> guard(soundQueueMutex);
-        sndQueue.push(buffer);
+        std::unique_ptr<short[]> buffer_unique_ptr(buffer);
+        sndQueue.push(std::move(buffer_unique_ptr));
     }
 }
 
@@ -108,5 +110,5 @@ void AudioRecorder_cleanup(void) {
 
 extern "C"
 short *AudioRecorder_getNextAudioReading(void) {
-    return recorder->getNextAudioReading();
+    return recorder->getNextAudioReading().get();
 }
