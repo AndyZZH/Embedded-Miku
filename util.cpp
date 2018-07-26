@@ -1,8 +1,6 @@
 #include <chrono>
 
-extern "C" {
-    #include "util.h"
-}
+#include "util.h"
 
 extern "C"
 long long Util_getCurrentTime() {
