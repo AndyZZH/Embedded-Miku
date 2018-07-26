@@ -29,7 +29,7 @@ CPPFLAGS = -Wall -g -std=c++11 -Werror
 #      to host  ~/public/asound_lib_BBB/libasound.so
 # Copy to just base library:
 
-LFLAGS = -L$(LIBDIR) -lpthread -lasound -lbtrack -lsamplerate
+LFLAGS = -L$(LIBDIR)/x86-linux -L$(LIBDIR)/arm-linux -lpthread -lasound -lbtrack -lsamplerate
 
 
 # -pg for supporting gprof profiling.
