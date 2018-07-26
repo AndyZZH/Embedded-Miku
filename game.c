@@ -15,27 +15,21 @@
 #define DEFAULT_SCORE 0 //default react time +- 0.25s 
 
 // prototype
-static void* game(void* arg);
 
 static int score = DEFAULT_SCORE;
-static _Bool gameTerminated = false;
 static long long delayTime = DEFAULT_DELAY_TIMEms;
 static long long beatQueue[XBOX_NUM_TYPE];
-static pthread_t gameThreadId;
 
 
 void Game_init(void){
     srand(time(NULL));
-    for (int i = 0; i ++; i < XBOX_NUM_TYPE){
+    for (int i = 0; i < XBOX_NUM_TYPE; i++){
         beatQueue[i] = 0;
     }
-    pthread_create(&gameThreadId, NULL, gameThread, NULL);
 }
 
 void Game_cleanup(void){
     printf("[game] game cleanup starting");
-    gameTerminated = true;
-    pthread_join(gameThreadId,NULL);
     printf("[game] game cleanup finished");
 }
 
@@ -92,10 +86,4 @@ void Game_checkBeat(int button_id){
 
 int Game_getScore(){
     return score;
-}
-static void* gameThread(void* arg){
-    printf("[game] game thread start");
-    while (!gameTerminated){
-    }
-    return NULL;
 }

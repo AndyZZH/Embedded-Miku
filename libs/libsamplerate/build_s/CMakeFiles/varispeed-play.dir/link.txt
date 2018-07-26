@@ -1,0 +1,1 @@
+/usr/bin/cc     CMakeFiles/varispeed-play.dir/examples/varispeed-play.c.o CMakeFiles/varispeed-play.dir/examples/audio_out.c.o  -o varispeed-play -rdynamic libsamplerate.so -lm -lasound -Wl,-rpath,/home/andy/Embedded-Miku/libsamplerate/build_s 

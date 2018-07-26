@@ -1,0 +1,1 @@
+/usr/bin/cc     CMakeFiles/callback_test.dir/tests/callback_test.c.o CMakeFiles/callback_test.dir/tests/util.c.o CMakeFiles/callback_test.dir/tests/calc_snr.c.o  -o callback_test -rdynamic libsamplerate.so -lm -Wl,-rpath,/home/andy/Embedded-Miku/libsamplerate/build_s 

@@ -11,7 +11,7 @@
 #include <stdbool.h>
 
 // prototype
-static void* processFrame(void* arg);
+static void* processFrameThread(void* arg);
 
 static _Bool processFrameTerminated = false;
 static pthread_t processFrameId;
@@ -35,7 +35,7 @@ static void* processFrameThread(void* arg){
         if (frame == NULL){
             continue;
         }
-        Playback_playWithDelay(frame,frameSize, Game_getDelayTime);
+        Playback_playWithDelay(frame,frameSize, Game_getDelayTime());
         if (Beat_isBeat(frame,frameSize)){
             Game_EnqueueBeat();
         }
