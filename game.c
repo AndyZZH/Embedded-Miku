@@ -6,13 +6,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <pthread.h>
 #include <stdbool.h>
 #include <time.h>
 
 #define DEFAULT_DELAY_TIMEms 1000 // default delay time is 1s
-#define REACT_TIMEms 250 //default react time +- 0.25s 
-#define DEFAULT_SCORE 0 //default react time +- 0.25s 
+#define REACT_TIMEms 250 //default react time +- 0.25s
+#define DEFAULT_SCORE 0 //default score is 0
 
 // prototype
 
@@ -39,24 +38,25 @@ void Game_cleanup(void){
  * Function to enqueue beat in BeatSlot
  * - if there is slot is overdue, replace
  * - if no slot available, skip
- * 
+ *
  * Randomly choice start point at BeatSlot
- * 
- * 
+ *
+ *
  *  returns: void
  */
 void Game_EnqueueBeat(void){
     int currentSlot = rand() % XBOX_NUM_TYPE;
     long long currentTime = Util_getCurrentTime();
-    for (int i =0; i < XBOX_NUM_TYPE; i++){
+    for (int i = 0; i < XBOX_NUM_TYPE; i++){
         if (currentSlot == XBOX_NUM_TYPE) currentSlot = 0; // start all over from left hand side
-        if (beatQueue[currentSlot] + delayTime > currentTime){
+        if (beatQueue[currentSlot] + delayTime < currentTime){
             // overdue, see it as an empty slot
             beatQueue[currentSlot] = currentTime;
             // call led dropping
             Display_generateComponent(currentSlot);
             break;
         }
+        currentSlot++;
     }
 }
 
@@ -71,7 +71,7 @@ long long Game_getDelayTime(void){
  * Compare {timestamp, button_id} with BeatSlot
  * If valid: score++, set timestamp in slot{button_id} 0 (make it overdue)
  * otherwise do nothing
- * 
+ *
  *  returns: void
  */
 void Game_checkBeat(int button_id){
