@@ -1,0 +1,1 @@
+/usr/bin/cc     CMakeFiles/multi_channel_test.dir/tests/multi_channel_test.c.o CMakeFiles/multi_channel_test.dir/tests/util.c.o CMakeFiles/multi_channel_test.dir/tests/calc_snr.c.o  -o multi_channel_test -rdynamic libsamplerate.so -lm -Wl,-rpath,/home/andy/Embedded-Miku/libsamplerate/build_s 

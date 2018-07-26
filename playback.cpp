@@ -35,7 +35,7 @@ public:
 
     void queueSound(wavedata_t *pSound);
 private:
-    static playbackSound_t soundBites[MAX_SOUND_BITES];
+    playbackSound_t soundBites[MAX_SOUND_BITES];
     short *playbackBuffer;
     std::mutex audioMutex;
     void fillPlaybackBuffer();

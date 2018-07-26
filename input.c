@@ -50,7 +50,7 @@ static void* input_thread()
     while ((read_event(js, &event) == 0) && !input_thread_done)
     {
       if(event.type == JS_EVENT_BUTTON && event.value && (event.number < 4)){
-        Game_checkBeat(int(event.number));
+        Game_checkBeat((int)event.number);
       }
     }
 
