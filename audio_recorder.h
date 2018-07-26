@@ -3,6 +3,8 @@
 #ifndef _AUDIO_RECORDER_H_
 #define _AUDIO_RECORDER_H_
 
+extern "C" {
+
 // init() must be called before any other functions,
 // cleanup() must be called last to stop recording threads and free memory.
 void AudioRecorder_init(void);
@@ -16,6 +18,8 @@ short *AudioRecorder_getNextAudioReading(void);
 // http://stackoverflow.com/questions/6787318/set-alsa-master-volume-from-c-code
 int  AudioRecorder_getVolume(void);
 void AudioRecorder_setVolume(int newVolume);
+
+}
 
 #endif
 
