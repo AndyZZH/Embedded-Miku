@@ -1,29 +1,27 @@
 #include <alsa/asoundlib.h>
 #include <cstdio>
+#include <mutex>
 #include <queue>
 #include <thread>
 
 #include "audio.h"
-
-extern "C" {
-    #include "audio_recorder.h"
-}
+#include "audio_recorder.h"
 
 
 #define DEFAULT_VOLUME 80
 
 #define SAMPLE_RATE 44100
 #define NUM_CHANNELS 1
-#define SAMPLE_SIZE (sizeof(short)) 
 
 
 class AudioRecorder : public Audio {
 public:
     AudioRecorder();
     ~AudioRecorder();
-    short *getNextAudioReading();
+    double *getNextAudioReading();
 private:
-    std::queue<short *> sndQueue;
+    std::mutex soundQueueMutex;
+    std::queue<double*> sndQueue;
     void doThread() override;
 };
 
@@ -40,9 +38,10 @@ AudioRecorder::~AudioRecorder() {
 }
 
 
-short *AudioRecorder::getNextAudioReading() {
+double *AudioRecorder::getNextAudioReading() {
+    std::lock_guard<std::mutex> guard(soundQueueMutex);
     if (!sndQueue.empty()) {
-        short *returnVal = sndQueue.front();
+        double *returnVal = sndQueue.front();
         sndQueue.pop();
         return returnVal;
     } else {
@@ -55,25 +54,26 @@ void AudioRecorder::doThread() {
     // TODO: Need to handle infinite loop. Possibly implement stopping mechanism. 
     while (true) {
         // Create a new array to store read samples
-        short *buffer = new short[playbackBufferSize];
+        double *buffer = new double[playbackBufferSize];
 
         // Read the audio
         snd_pcm_sframes_t frames = snd_pcm_readi(handle, buffer, playbackBufferSize);
 
         // Check for (and handle) possible error conditions on output
         if (frames < 0) {
-            fprintf(stderr, "AudioMixer: readi() returned %li\n", frames);
+            fprintf(stderr, "[AudioRecorder]: readi() returned %li\n", frames);
             frames = snd_pcm_recover(handle, frames, 1);
         }
         if (frames < 0) {
-            fprintf(stderr, "ERROR: Failed writing audio with snd_pcm_readi(): %li\n", frames);
+            fprintf(stderr, "[AudioRecorder] ERROR: Failed writing audio with snd_pcm_readi(): %li\n", frames);
             exit(EXIT_FAILURE);
         }
         if (frames > 0 && frames < (long)playbackBufferSize) {
-            printf("Short write (expected %li, wrote %li)\n", playbackBufferSize, frames);
+            printf("[AudioRecorder] Short write (expected %li, wrote %li)\n", playbackBufferSize, frames);
         }
 
         // Push the pointer of data to the queue
+        std::lock_guard<std::mutex> guard(soundQueueMutex);
         sndQueue.push(buffer);
     }
 }
@@ -103,6 +103,6 @@ void AudioRecorder_cleanup(void) {
 }
 
 extern "C"
-short *AudioRecorder_getNextAudioReading(void) {
+double *AudioRecorder_getNextAudioReading(void) {
     return recorder->getNextAudioReading();
 }
