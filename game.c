@@ -48,6 +48,7 @@ void Game_EnqueueBeat(void){
     int currentSlot = rand() % XBOX_NUM_TYPE;
     long long currentTime = Util_getCurrentTime();
     for (int i = 0; i < XBOX_NUM_TYPE; i++){
+	printf("beatqueue %lld, current time: %lld, delay: %lld\n",beatQueue[currentSlot], currentTime, delayTime );
         if (currentSlot == XBOX_NUM_TYPE) currentSlot = 0; // start all over from left hand side
         if (beatQueue[currentSlot] + delayTime < currentTime){
             // overdue, see it as an empty slot
@@ -81,6 +82,7 @@ void Game_checkBeat(int button_id){
         // within time interval, score++
         score ++;
         beatQueue[button_id] = 0;
+	printf("The score is %d.\n", score);
     }
 }
 
