@@ -2,11 +2,16 @@
 #include <stdio.h>
 #include <time.h>
 #include <stdbool.h>
+#include "game.h"
 #include "led.h"
 
-#define COMPONENT_MAX_NUM 5 
+#define COMPONENT_MAX_NUM 16 
 #define DISPLAY_WIDTH 32 
-#define COLOR_MAPPING_SIZE 4
+#define DISPLAY_HEIGHT 16
+#define SLOT_SIZE 8
+#define SLOT_NUM 4
+
+#define MAX_LIFE 8
 
 /*
  *   button:
@@ -20,18 +25,21 @@ typedef struct {
     int height;
 } component; 
 
-static int color_mapping[COLOR_MAPPING_SIZE] = { 2, 1, 4, 3 };  //index : contoroller button number & SLOT number
+static int color_mapping[SLOT_NUM] = { 2, 1, 4, 3 };  //index : contoroller button number & SLOT number
 
 static pthread_t displayThread;
 static pthread_mutex_t currentComponentLock = PTHREAD_MUTEX_INITIALIZER;
+//static pthread_mutex_t lifeLock = PTHREAD_MUTEX_INITIALIZER;
 static bool running;
 static long totalDelay;
+static int goneLife;
 
 static component currentComponent[COMPONENT_MAX_NUM];
 
 static void* displayLoop (void *);
+static void displayLife(void);
 
-int Display_init (int delayTimeInMs)
+int Display_init (int delayTimeInMs, void (*f) (int))
 {
     for (int i = 0; i < COMPONENT_MAX_NUM; i++){
         currentComponent[i].height = -1;
@@ -39,6 +47,7 @@ int Display_init (int delayTimeInMs)
     } 
     running = true;
     totalDelay = delayTimeInMs *1000000 ; 
+    goneLife = 0;
 
     int threadCreateResult = pthread_create (&displayThread, NULL, displayLoop, NULL);
     return threadCreateResult;
@@ -53,13 +62,13 @@ static void* displayLoop (void* empty)
     reqtime.tv_sec = totalDelay / 1000000000; 
     reqtime.tv_nsec = totalDelay % 1000000000; 
 
-    int width = DISPLAY_WIDTH / 4;
+    int width = DISPLAY_WIDTH / SLOT_NUM;
     int currentHeight;
     int slot;
     while (running) {
         LED_clean_display();
         
-        for (int i = 0; i < COMPONENT_MAX_NUM; i++){
+        for (int i = 0; i < COMPONENT_MAX_NUM && goneLife < MAX_LIFE; i++){
             pthread_mutex_lock (&currentComponentLock);
             {
                 currentHeight = currentComponent[i].height; 
@@ -67,22 +76,32 @@ static void* displayLoop (void* empty)
             }
             pthread_mutex_unlock (&currentComponentLock);
 
-            if ( currentHeight >= 16)
+            if ( currentHeight >= DISPLAY_HEIGHT){
                 currentComponent[i].height = -1;
+			    Game_checkTimeout(slot);
+            }
 
             if ( currentHeight >=0 ){
-                //LED_display_rectangle(slot*8, currentHeight, slot*8 + width-1, currentHeight, 2); 
-                LED_display_rectangle(slot*8, currentHeight, slot*8 + width-1, (currentHeight+1)%16, color_mapping[currentComponent[i].slot] );
+                LED_display_rectangle(slot*SLOT_SIZE + goneLife/2, currentHeight, slot*SLOT_SIZE + width-1 - goneLife/2, (currentHeight+1) % DISPLAY_HEIGHT, color_mapping[slot] );
                 currentComponent[i].height++;
-                if (currentComponent[i].height >= 16){
+                if (currentComponent[i].height >= DISPLAY_HEIGHT){
                     currentComponent[i].height = -1;
+			        Game_checkTimeout(slot);
                 } 
             }
         } 
+        displayLife();
         nanosleep(&reqtime, NULL); 
     }
     printf ( "stop displaying loop \n");
     return NULL;
+}
+
+static void displayLife (void)
+{
+    for (int i = 0; i < 4; i++){
+        LED_display_rectangle(i*SLOT_SIZE + goneLife/2, DISPLAY_HEIGHT-1, (i+1)*SLOT_SIZE - (1 + goneLife/2), DISPLAY_HEIGHT-1, color_mapping[i]);
+    }
 }
 
 void Display_cleanup(void)
@@ -108,4 +127,38 @@ void Display_generateComponent (int button)
     }
     pthread_mutex_unlock (&currentComponentLock);
     return;
+}
+
+void Display_decreaseLife(int life)
+{
+    if (life >= MAX_LIFE){
+        goneLife = 0;
+        return;
+    }
+    if (goneLife <= MAX_LIFE -1)
+    {
+    	goneLife = MAX_LIFE - life;
+    }
+}
+
+void Display_rechargeLife(int life)
+{
+    if (life >= MAX_LIFE){
+        goneLife = 0;
+        return;
+    }
+    if (life <= 0) {
+        goneLife = MAX_LIFE; 
+        return;
+    }
+    goneLife = MAX_LIFE - life;
+    pthread_mutex_lock (&currentComponentLock);
+    {
+        for (int i = 0; i < COMPONENT_MAX_NUM; i++){
+            currentComponent[i].height = -1;
+            currentComponent[i].slot = -1;
+        }
+    }
+    pthread_mutex_unlock (&currentComponentLock);
+
 }

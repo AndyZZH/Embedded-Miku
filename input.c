@@ -49,7 +49,7 @@ static void* input_thread()
     /* This loop will exit if the controller is unplugged. */
     while ((read_event(js, &event) == 0) && !input_thread_done)
     {
-      if(event.type == JS_EVENT_BUTTON && event.value && (event.number < 4)){
+      if(event.type == JS_EVENT_BUTTON && event.value && ((event.number < 4) || (event.number == 6))){
         Game_checkBeat((int)event.number);
       }
     }

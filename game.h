@@ -11,10 +11,10 @@ void Game_cleanup(void);
  * Function to enqueue beat in BeatSlot
  * - if there is slot is overdue, replace
  * - if no slot available, skip
- * 
+ *
  * Randomly choice start point at BeatSlot
- * 
- * 
+ *
+ *
  *  returns: void
  */
 void Game_EnqueueBeat(void);
@@ -22,10 +22,20 @@ void Game_EnqueueBeat(void);
 /*
  * Function:  Game_EnqueueBeat()
  * --------------------
- * 
+ *
  *  returns: delayTime
  */
 long long Game_getDelayTime(void);
+
+/*
+ * Function:  Game_checkTimeout()
+ * --------------------
+ * Function to check if a slot is timeout
+ *  - if it is call the reduce life Function
+ *  - if not, do nothing
+ *  returns: void
+ */
+void Game_checkTimeout(int);
 
 /*
  * Function:  Game_checkBeat()
@@ -34,7 +44,7 @@ long long Game_getDelayTime(void);
  * Compare {timestamp, button_id} with BeatSlot
  * If valid: score++, set timestamp in slot{button_id} 0 (make it overdue)
  * otherwise do nothing
- * 
+ *
  *  returns: void
  */
 void Game_checkBeat(int button_id);
