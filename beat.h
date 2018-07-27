@@ -3,5 +3,5 @@
 
 #include <stdbool.h>
 
-bool Beat_isBeat(short* frame, int frameSize);
+bool Beat_isBeat(double* frame, int frameSize);
 #endif

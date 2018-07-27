@@ -2,6 +2,8 @@
 #include "beat.h"
 
 #include <stdio.h>
+
+#define DEFAULT_HOP_SIZE 64
 /*
  * Function:  Beat_isBeat
  * --------------------
@@ -9,12 +11,8 @@
  *  returns: Boolean
  */
 
-bool Beat_isBeat(short* frameInShort, int frameSize){
-    struct BTrack* bt = newBTrack_hs_fs(frameSize/2, frameSize);
-    double frame[frameSize];
-    for (int i = 0; i < frameSize; i++){
-        frame[i] = (double)frameInShort[i];
-    }
+bool Beat_isBeat(double* frame, int frameSize){
+    struct BTrack* bt = newBTrack_hs_fs(DEFAULT_HOP_SIZE, frameSize);
     // fill frame
     BTrack_call_processAudioFrame(bt,frame);
     bool ans = BTrack_call_beatDueInCurrentFrame(bt);
