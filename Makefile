@@ -25,15 +25,13 @@ LD = $(CROSS_TOOL)g++
 CFLAGS = -Wall -g -std=c99 -D _POSIX_C_SOURCE=200809L -Werror
 CPPFLAGS = -Wall -g -std=c++11 -Werror
 
-# Asound process:
-# get alibsound2 lib on target:
-# 	# apt-get install libasound2
-# Copy target's /usr/lib/arm-linux-gnueabihf/libasound.so.2.0.0 
-#      to host  ~/public/asound_lib_BBB/libasound.so
-# Copy to just base library:
-
-LFLAGS = -L$(LIBDIR)/x86-linux -L$(LIBDIR)/arm-linux -lpthread -lasound -lbtrack -lsamplerate
-# LFLAGS = -L$(LIBDIR)/arm-linux -lpthread -lasound -lbtrack -lsamplerate
+# If CROSS_TOOL is not defined, we are compiling on host and use -L$(LIBDIR)/x86-linux as linker folder
+# otherwise, we will use -L$(LIBDIR)/arm-linux as linker folder
+ifeq ($(CROSS_TOOL),)
+	LFLAGS := -L$(LIBDIR)/x86-linux -lpthread -lasound -lbtrack -lsamplerate
+else ifeq ($(CROSS_TOOL),arm-linux-gnueabihf-)
+	LFLAGS := -L$(LIBDIR)/arm-linux -lpthread -lasound -lbtrack -lsamplerate
+endif
 
 
 # -pg for supporting gprof profiling.
