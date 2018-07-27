@@ -34,7 +34,6 @@ static component currentComponent[COMPONENT_MAX_NUM];
 
 static void* displayLoop (void *);
 static void displayLife(void);
-static void (*fp) (int) = 0;
 
 int Display_init (int delayTimeInMs, void (*f) (int))
 {
@@ -45,8 +44,6 @@ int Display_init (int delayTimeInMs, void (*f) (int))
     running = true;
     totalDelay = delayTimeInMs *1000000 ; 
     goneLife = 0;
-
-    fp = f;
 
     int threadCreateResult = pthread_create (&displayThread, NULL, displayLoop, NULL);
     return threadCreateResult;
@@ -67,7 +64,7 @@ static void* displayLoop (void* empty)
     while (running) {
         LED_clean_display();
         
-        for (int i = 0; i < COMPONENT_MAX_NUM; i++){
+        for (int i = 0; i < COMPONENT_MAX_NUM && goneLife < 4; i++){
             pthread_mutex_lock (&currentComponentLock);
             {
                 currentHeight = currentComponent[i].height; 
@@ -83,9 +80,7 @@ static void* displayLoop (void* empty)
                 currentComponent[i].height++;
                 if (currentComponent[i].height >= 16){
                     currentComponent[i].height = -1;
-			Game_checkTimeout(slot);
-			/*if (fp != 0)
-                        fp(currentComponent[i].slot);*/
+			        Game_checkTimeout(slot);
                 } 
             }
         } 
