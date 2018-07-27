@@ -26,4 +26,8 @@ void Display_cleanup(void);
  *      - 3 : Y (Yellow)
  */
 void Display_generateComponent(int button);
+
+void Display_decreaseLife(void);
+
+void Display_rechargeLife(void);
 #endif

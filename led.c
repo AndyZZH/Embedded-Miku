@@ -79,6 +79,7 @@ int LED_init (void)
     for( int i = 0; i < 32; i++)
         for (int j = 0; j < 16; j++)
                 screen[i][j] = 0;
+
     running = true;
     int threadCreateResult = pthread_create( &refreshThread, NULL, refreshLoop, NULL);
     return threadCreateResult;
