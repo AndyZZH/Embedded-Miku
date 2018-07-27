@@ -13,7 +13,7 @@ void AudioRecorder_init(void);
 void AudioRecorder_cleanup(void);
 
 unsigned long AudioRecorder_getFrameSize(void);
-short *AudioRecorder_getNextAudioReading(void);
+double *AudioRecorder_getNextAudioReading(void);
 
 // Get/set the volume.
 // setVolume() function posted by StackOverflow user "trenki" at:
