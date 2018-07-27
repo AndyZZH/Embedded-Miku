@@ -131,13 +131,25 @@ void Display_generateComponent (int button)
 
 void Display_decreaseLife(int life)
 {
+    if (life >= MAX_LIFE){
+        goneLife = 0;
+        return;
+    }
     if (goneLife <= MAX_LIFE -1)
     {
     	goneLife = MAX_LIFE - life;
     }
 }
 
-void Display_recharegeLife(void)
+void Display_recharegeLife(int life)
 {
+    if (life >= MAX_LIFE){
         goneLife = 0;
+        return;
+    }
+    if (life <= 0) {
+        goneLife = MAX_LIFE; 
+        return;
+    }
+    goneflie = MAX_LIFE - life;
 }

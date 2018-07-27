@@ -29,5 +29,5 @@ void Display_generateComponent(int button);
 
 void Display_decreaseLife(int life);
 
-void Display_rechargeLife(void);
+void Display_rechargeLife(int life);
 #endif
