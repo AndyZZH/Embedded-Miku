@@ -1,9 +1,18 @@
 #ifndef __BEAT_H
 #define __BEAT_H
 
-#include <stdbool.h>
 #include "./libs/btrack/BTrack_wrapper.h"
 
-bool Beat_isBeat(short* frame, int frameSize);
-// bool Beat_isBeat(double* frame, int frameSize, BTrack* bt);
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+// bool Beat_isBeat(short* frame, int frameSize);
+bool Beat_isIdle(void);
+void Beat_enqueueIfIsBeat(double* frame, unsigned long frameSize, BTrack* bt);
+
+#ifdef __cplusplus
+}
+#endif
+
 #endif
