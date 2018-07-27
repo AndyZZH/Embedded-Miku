@@ -4,13 +4,6 @@
 # Edit this file to compile extra C files into their own programs.
 TARGET= miku
 
-
-#LED TEST#
-SOURCES_LED_TEST = led.c display.c ledTest.c
-OUTDIR_LED_TEST = $(HOME)/cmpt433/public/myApps
-TARGET_LED_TEST = led_test
-##########
-
 OBJDIR = obj
 LIBDIR = libs
 OUTDIR = bin
@@ -73,9 +66,6 @@ bt_lib:
 
 btrack_test: btrack_lib
 	$(CC_C) $(CFLAGS) $(SOURCES) -o $(OUTDIR)/$(TARGET)  $(LFLAGS) -lpthread -lasound
-
-led_test:
-	$(CC_C) $(CFLAGS) $(SOURCES_LED_TEST) -o $(OUTDIR_LED_TEST)/$(TARGET_LED_TEST) -lpthread
 
 clean:
 	rm -rf $(OBJDIR)
