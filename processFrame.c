@@ -31,7 +31,7 @@ static void* processFrameThread(void* arg){
     printf("[ProcessFrame] processFrame thread start");
     frameSize = AudioRecorder_getFrameSize();
     while (!processFrameTerminated){
-        short* frame= AudioRecorder_getNextAudioReading();
+        double* frame= AudioRecorder_getNextAudioReading();
         if (frame == NULL){
             continue;
         }
