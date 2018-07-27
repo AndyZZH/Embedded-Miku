@@ -17,8 +17,8 @@
 #define GPIO_BLUE1 87 
 #define GPIO_GREEN1 88 
 #define GPIO_RED2 10 // Under
-#define GPIO_BLUE2 11 
-#define GPIO_GREEN2 9 
+#define GPIO_BLUE2 9 
+#define GPIO_GREEN2 11 
 
 #define GPIO_ROW_A 8 
 #define GPIO_ROW_B 80 

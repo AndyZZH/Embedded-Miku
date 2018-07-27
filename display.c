@@ -20,7 +20,7 @@ typedef struct {
     int height;
 } component; 
 
-static int color_mapping[COLOR_MAPPING_SIZE] = { 2, 1, 4, 3 };  //index : contoroller button number & SLOT number
+static int color_mapping[COLOR_MAPPING_SIZE] = { 2, 1, 4, 5 };  //index : contoroller button number & SLOT number
 
 static pthread_t displayThread;
 static pthread_mutex_t currentComponentLock = PTHREAD_MUTEX_INITIALIZER;
