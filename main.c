@@ -3,6 +3,7 @@
 #include "led.h"
 #include "display.h"
 #include "game.h"
+#include "input.h"
 #include "processFrame.h"
 #include <stdlib.h>
 // #include <unistd.h>
