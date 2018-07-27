@@ -13,7 +13,7 @@ public:
 
     void play(double* frame, int frameSize);
 private:
-    // std::mutex audioMutex;
+    std::mutex audioMutex;
     void doThread() override;
 };
 
@@ -32,6 +32,7 @@ AudioPlayer::~AudioPlayer() {
 
 void AudioPlayer::play(double* frame, int frameSize) {
     // Output the audio
+    std::lock_guard<std::mutex> guard(audioMutex);
     snd_pcm_sframes_t frames = snd_pcm_writei(handle, frame, frameSize);
 
     // Check for (and handle) possible error conditions on output
