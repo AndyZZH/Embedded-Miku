@@ -5,6 +5,5 @@
 extern "C"
 long long Util_getCurrentTime() {
     using namespace std::chrono;
-    using cast = duration<long long>;
-    return duration_cast<cast>(system_clock::now().time_since_epoch()).count();
+    return duration_cast<milliseconds>(system_clock::now().time_since_epoch()).count();
 }
