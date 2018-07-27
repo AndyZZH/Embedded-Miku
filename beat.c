@@ -12,7 +12,7 @@
  *  returns: Boolean
  */
 // bool Beat_isBeat(double* frame, int frameSize,BTrack* bt){
-bool Beat_isBeat(double* frame, int frameSize){
+bool Beat_isBeat(short* frame, int frameSize){
     // struct BTrack* bt = newBTrack_hs_fs(DEFAULT_HOP_SIZE, frameSize);
     // printf("frameSize: %d\n", frameSize);
     // fill frame
