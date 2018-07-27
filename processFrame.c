@@ -10,13 +10,21 @@
 #include <pthread.h>
 #include <stdbool.h>
 
+#define DEFAULT_HOP_SIZE 50
+
 // prototype
 static void* processFrameThread(void* arg);
 
 static _Bool processFrameTerminated = false;
 static pthread_t processFrameId;
 static int frameSize;
+static struct timespec reqtime;
+static struct BTrack* bt;
+
 void ProcessFrame_init(void){
+    reqtime.tv_sec=0;
+    reqtime.tv_nsec = 50 * 1000;
+    bt = newBTrack_hs_fs(DEFAULT_HOP_SIZE, 100);    
     pthread_create(&processFrameId, NULL, processFrameThread, NULL);
 }
 
@@ -39,6 +47,7 @@ static void* processFrameThread(void* arg){
         if (Beat_isBeat(frame,frameSize)){
             Game_EnqueueBeat();
         }
+        nanosleep(&reqtime, NULL);
     }
     return NULL;
 }
