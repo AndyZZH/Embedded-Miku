@@ -13,7 +13,8 @@
 #define DEFAULT_DELAY_TIMEms 1000 // default delay time is 1s
 #define REACT_TIMEms 250 //default react time +- 0.25s
 #define DEFAULT_SCORE 0 //default score is 0
-#define DEFAULT_LIFE 4 // default chances before player lose
+#define DEFAULT_LIFE 8 // default chances before player lose
+#define RESTART_BTN 6 // the id of button to be clicked to restart the game
 
 // prototype
 
@@ -22,14 +23,16 @@ static long long delayTime = DEFAULT_DELAY_TIMEms;
 static long long beatQueue[XBOX_NUM_TYPE];
 static int life = DEFAULT_LIFE;
 static bool timeoutQueue[XBOX_NUM_TYPE];
+static bool gameOver = false;
 
 static void decrease_life(){
   life--;
   printf("Life left: %d\n", life);
   //call turn off led
-  Display_decreaseLife();
+  Display_decreaseLife(life);
   if(life == 0){
-    //TODO: game over
+    //game over
+    gameOver = true;
   }
 }
 
@@ -37,7 +40,9 @@ static void decrease_life(){
 
 void Game_init(void){
     srand(time(NULL));
+    score = DEFAULT_SCORE;
     score_setDigit(score);
+    life = DEFAULT_LIFE;
     for (int i = 0; i < XBOX_NUM_TYPE; i++){
         beatQueue[i] = 0;
         timeoutQueue[i] = false;
@@ -64,19 +69,21 @@ void Game_cleanup(void){
 void Game_EnqueueBeat(void){
     int currentSlot = rand() % XBOX_NUM_TYPE;
     long long currentTime = Util_getCurrentTime();
-    for (int i = 0; i < XBOX_NUM_TYPE; i++){
-	printf("beatqueue %lld, current time: %lld, delay: %lld\n",beatQueue[currentSlot], currentTime, delayTime );
-        if (currentSlot == XBOX_NUM_TYPE) currentSlot = 0; // start all over from left hand side
-        if (beatQueue[currentSlot] + delayTime < currentTime){
-            // overdue, see it as an empty slot
-            beatQueue[currentSlot] = currentTime;
-            timeoutQueue[currentSlot] = true;
-            // call led dropping
-            Display_generateComponent(currentSlot);
-            break;
-        }
-        currentSlot++;
-    }
+	if(!gameOver){
+	    for (int i = 0; i < XBOX_NUM_TYPE; i++){
+		//printf("beatqueue %lld, current time: %lld, delay: %lld\n",beatQueue[currentSlot], currentTime, delayTime );
+		if (currentSlot == XBOX_NUM_TYPE) currentSlot = 0; // start all over from left hand side
+		if (beatQueue[currentSlot] + delayTime < currentTime){
+		    // overdue, see it as an empty slot
+		    beatQueue[currentSlot] = currentTime;
+		    timeoutQueue[currentSlot] = true;
+		    // call led dropping
+		    Display_generateComponent(currentSlot);
+		    break;
+		}
+		currentSlot++;
+	    }
+	}
 }
 
 long long Game_getDelayTime(void){
@@ -96,7 +103,14 @@ long long Game_getDelayTime(void){
 void Game_checkBeat(int button_id){
     long long currentTime = Util_getCurrentTime();
     long long timeInSlot = beatQueue[button_id];
-    if (timeInSlot + delayTime - currentTime < REACT_TIMEms && timeInSlot + delayTime - currentTime > -REACT_TIMEms ){
+    if(button_id == RESTART_BTN){
+	if(gameOver){
+	  Game_init();
+	  Display_rechargeLife(DEFAULT_LIFE);
+	  gameOver = false;
+	}
+    }
+    else if (timeInSlot + delayTime - currentTime < REACT_TIMEms && timeInSlot + delayTime - currentTime > -REACT_TIMEms ){
         // within time interval, score++
         score ++;
         score_setDigit(score);

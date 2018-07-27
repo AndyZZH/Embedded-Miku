@@ -8,8 +8,8 @@
 #define COMPONENT_MAX_NUM 16 
 #define DISPLAY_WIDTH 32 
 #define DISPLAY_HEIGHT 16
-#define SLOT_SIZE 4
 #define SLOT_SIZE 8
+#define SLOT_NUM 4
 
 #define MAX_LIFE 8
 
@@ -25,7 +25,7 @@ typedef struct {
     int height;
 } component; 
 
-static int color_mapping[SLOT_SIZE] = { 2, 1, 4, 3 };  //index : contoroller button number & SLOT number
+static int color_mapping[SLOT_NUM] = { 2, 1, 4, 3 };  //index : contoroller button number & SLOT number
 
 static pthread_t displayThread;
 static pthread_mutex_t currentComponentLock = PTHREAD_MUTEX_INITIALIZER;
@@ -100,7 +100,7 @@ static void* displayLoop (void* empty)
 static void displayLife (void)
 {
     for (int i = 0; i < 4; i++){
-        LED_display_rectangle(i*SLOT_SIZE + goneLife/2, DISPLAY_HEIGHT-1, (i+1)*SLOT_SIZE - (1 + goneLife/2), DISPLAY_HIEGHT-1, color_mapping[i]);
+        LED_display_rectangle(i*SLOT_SIZE + goneLife/2, DISPLAY_HEIGHT-1, (i+1)*SLOT_SIZE - (1 + goneLife/2), DISPLAY_HEIGHT-1, color_mapping[i]);
     }
 }
 
@@ -141,7 +141,7 @@ void Display_decreaseLife(int life)
     }
 }
 
-void Display_recharegeLife(int life)
+void Display_rechargeLife(int life)
 {
     if (life >= MAX_LIFE){
         goneLife = 0;
@@ -151,5 +151,14 @@ void Display_recharegeLife(int life)
         goneLife = MAX_LIFE; 
         return;
     }
-    goneflie = MAX_LIFE - life;
+    goneLife = MAX_LIFE - life;
+    pthread_mutex_lock (&currentComponentLock);
+    {
+        for (int i = 0; i < COMPONENT_MAX_NUM; i++){
+            currentComponent[i].height = -1;
+            currentComponent[i].slot = -1;
+        }
+    }
+    pthread_mutex_unlock (&currentComponentLock);
+
 }
