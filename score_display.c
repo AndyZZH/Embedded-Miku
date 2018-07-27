@@ -110,7 +110,6 @@ static void GPIO() {
 }
 
 void score_setDigit(long long digit){
-    printf("Number of arrays sorted per second: %lld\n", digit);
     if(digit >= 99){
         digitDisplay = 99;
     }
@@ -154,7 +153,6 @@ static void* changeDisplay(){
 
 
 void score_starter() {
-    printf("Drive display (assumes GPIO #61 and #44 are output and 1)\n");
     GPIO();
     if(pthread_create(&I2C_thread, NULL, changeDisplay, NULL) == -1){
         printf("Error: failed to create I2C thread.\n");
