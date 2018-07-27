@@ -7,7 +7,6 @@
 #define COMPONENT_MAX_NUM 5 
 #define DISPLAY_WIDTH 32 
 #define COLOR_MAPPING_SIZE 4
-#define MAX_LIFE 4
 
 /*
  *   button:
@@ -142,7 +141,7 @@ void Display_recharegeLife(void)
 {
     pthread_mutex_lock (&lifeLock);
     {
-        goneLife = MAX_LIFE;
+        goneLife = 0;
     }
     pthread_mutex_unlock (&lifeLock);
 }
