@@ -17,7 +17,7 @@ CPP_FILES = $(wildcard *.cpp)
 CPP_OBJS = $(addprefix $(OBJDIR)/, $(CPP_FILES:.cpp=.o))
 
 
-CROSS_TOOL =
+CROSS_TOOL = arm-linux-gnueabihf-
 CC_CPP = $(CROSS_TOOL)g++
 CC_C = $(CROSS_TOOL)gcc
 LD = $(CROSS_TOOL)g++
