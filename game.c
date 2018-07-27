@@ -2,6 +2,7 @@
 #include "util.h"
 #include "display.h"
 #include "input.h"
+#include "score_display.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -22,6 +23,7 @@ static long long beatQueue[XBOX_NUM_TYPE];
 
 void Game_init(void){
     srand(time(NULL));
+    score_setDigit(score);
     for (int i = 0; i < XBOX_NUM_TYPE; i++){
         beatQueue[i] = 0;
     }
@@ -81,6 +83,7 @@ void Game_checkBeat(int button_id){
     if (timeInSlot + delayTime - currentTime < REACT_TIMEms && timeInSlot + delayTime - currentTime > -REACT_TIMEms ){
         // within time interval, score++
         score ++;
+        score_setDigit(score);
         beatQueue[button_id] = 0;
 	printf("The score is %d.\n", score);
     }
