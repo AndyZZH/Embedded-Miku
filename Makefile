@@ -6,9 +6,12 @@ TARGET= miku
 
 OBJDIR = obj
 LIBDIR = libs
-OUTDIR = bin
+OUTDIR = $(HOME)/cmpt433/public/myApps
 
 C_FILES = $(wildcard *.c)
+# Filter out ledTest.c since it is a testing module
+C_FILES := $(filter-out ledTest.c, $(C_FILES))
+
 C_OBJS = $(addprefix $(OBJDIR)/, $(C_FILES:.c=.o))
 CPP_FILES = $(wildcard *.cpp)
 CPP_OBJS = $(addprefix $(OBJDIR)/, $(CPP_FILES:.cpp=.o))
@@ -29,8 +32,8 @@ CPPFLAGS = -Wall -g -std=c++11 -Werror
 #      to host  ~/public/asound_lib_BBB/libasound.so
 # Copy to just base library:
 
-# LFLAGS = -L$(LIBDIR)/x86-linux -L$(LIBDIR)/arm-linux -lpthread -lasound -lbtrack -lsamplerate
-LFLAGS = -L$(LIBDIR)/arm-linux -lpthread -lasound -lbtrack -lsamplerate
+LFLAGS = -L$(LIBDIR)/x86-linux -L$(LIBDIR)/arm-linux -lpthread -lasound -lbtrack -lsamplerate
+# LFLAGS = -L$(LIBDIR)/arm-linux -lpthread -lasound -lbtrack -lsamplerate
 
 
 # -pg for supporting gprof profiling.
@@ -47,7 +50,6 @@ all: setup_folders compile
 
 compile: $(C_OBJS) $(CPP_OBJS)
 	$(LD) $^ -o $(OUTDIR)/$(TARGET) $(LFLAGS)
-	cp $(LIBDIR)/*.so $(OUTDIR)
 
 # Pattern to match cpp files and use g++ to compile
 $(OBJDIR)/%.o: %.cpp
@@ -69,4 +71,4 @@ btrack_test: btrack_lib
 
 clean:
 	rm -rf $(OBJDIR)
-	rm -rf $(OUTDIR)
+	rm -f $(OUTDIR)/$(TARGET)
