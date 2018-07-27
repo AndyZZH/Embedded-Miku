@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <time.h>
 #include <stdbool.h>
+#include "game.h"
 #include "led.h"
 
 #define COMPONENT_MAX_NUM 5 
@@ -24,7 +25,7 @@ static int color_mapping[COLOR_MAPPING_SIZE] = { 2, 1, 4, 3 };  //index : contor
 
 static pthread_t displayThread;
 static pthread_mutex_t currentComponentLock = PTHREAD_MUTEX_INITIALIZER;
-static pthread_mutex_t lifeLock = PTHREAD_MUTEX_INITIALIZER;
+//static pthread_mutex_t lifeLock = PTHREAD_MUTEX_INITIALIZER;
 static bool running;
 static long totalDelay;
 static int goneLife;
@@ -32,7 +33,7 @@ static int goneLife;
 static component currentComponent[COMPONENT_MAX_NUM];
 
 static void* displayLoop (void *);
-static void displayLife(int life);
+static void displayLife(void);
 static void (*fp) (int) = 0;
 
 int Display_init (int delayTimeInMs, void (*f) (int))
@@ -63,7 +64,6 @@ static void* displayLoop (void* empty)
     int width = DISPLAY_WIDTH / 4;
     int currentHeight;
     int slot;
-    int goneLife = 4;
     while (running) {
         LED_clean_display();
         
@@ -79,12 +79,13 @@ static void* displayLoop (void* empty)
                 currentComponent[i].height = -1;
 
             if ( currentHeight >=0 ){
-                LED_display_rectangle(slot*8 + goneLife, currentHeight, slot*8 + width-1 - goneLife, (currentHeight+1)%16, color_mapping[currentComponent[i].slot] );
+                LED_display_rectangle(slot*8 + goneLife, currentHeight, slot*8 + width-1 - goneLife, (currentHeight+1)%16, color_mapping[slot] );
                 currentComponent[i].height++;
                 if (currentComponent[i].height >= 16){
                     currentComponent[i].height = -1;
-                    if (fp != 0)
-                        fp();
+			Game_checkTimeout(slot);
+			/*if (fp != 0)
+                        fp(currentComponent[i].slot);*/
                 } 
             }
         } 
@@ -95,7 +96,7 @@ static void* displayLoop (void* empty)
     return NULL;
 }
 
-static void displayLife ()
+static void displayLife (void)
 {
     for (int i = 0; i < 4; i++){
         LED_display_rectangle(i*8 + goneLife, 15, (i+1)*8 - (1 + goneLife), 15, color_mapping[i]);
@@ -129,19 +130,11 @@ void Display_generateComponent (int button)
 
 void Display_decreaseLife(void)
 {
-    pthread_mutex_lock (&lifeLock);
-    {
-        if( goneLife < 4 )
-            goneLife++;
-    }
-    pthread_mutex_unlock (&lifeLock);
+    if (goneLife <=3)
+    	goneLife++;
 }
 
 void Display_recharegeLife(void)
 {
-    pthread_mutex_lock (&lifeLock);
-    {
         goneLife = 0;
-    }
-    pthread_mutex_unlock (&lifeLock);
 }

@@ -23,6 +23,18 @@ static long long beatQueue[XBOX_NUM_TYPE];
 static int life = DEFAULT_LIFE;
 static bool timeoutQueue[XBOX_NUM_TYPE];
 
+static void decrease_life(){
+  life--;
+  printf("Life left: %d\n", life);
+  //call turn off led
+  Display_decreaseLife();
+  if(life == 0){
+    //TODO: game over
+  }
+}
+
+
+
 void Game_init(void){
     srand(time(NULL));
     score_setDigit(score);
@@ -89,18 +101,12 @@ void Game_checkBeat(int button_id){
         score ++;
         score_setDigit(score);
         beatQueue[button_id] = 0;
-        timeoutQueue[currentSlot] = false;
+        timeoutQueue[button_id] = false;
 	printf("The score is %d.\n", score);
     }
-}
-
-static void decrease_life(){
-  life--;
-  //call turn off led
-  Display_decreaseLife();
-  if(life == 0){
-    //game over
-  }
+    else{
+	decrease_life();
+    }
 }
 
 /*
