@@ -19,7 +19,7 @@ short *AudioRecorder_getNextAudioReading(void);
 // setVolume() function posted by StackOverflow user "trenki" at:
 // http://stackoverflow.com/questions/6787318/set-alsa-master-volume-from-c-code
 int  AudioRecorder_getVolume(void);
-void AudioRecorder_setVolume(int newVolume);
+// void AudioRecorder_setVolume(int newVolume);
 
 #ifdef __cplusplus
 }

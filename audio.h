@@ -4,7 +4,7 @@
 #include <alsa/asoundlib.h>
 #include <thread>
 
-#define DEFAULT_VOLUME  80
+#define DEFAULT_VOLUME  100
 #define MAX_VOLUME      100
 
 #define SAMPLE_RATE 44100
@@ -20,8 +20,9 @@ public:
     Audio(AudioMode mode);
     virtual ~Audio();
 
-    void setVolume(int newVolume);
-    int getVolume() const { return volume; }
+    void setPlaybackVolume(int newVolume);
+    void setCaptureVolume(int newVolume);
+    // int getVolume() const { return volume; }
     unsigned long getFrameSize() const { return playbackBufferSize; }
 protected:
     int volume;

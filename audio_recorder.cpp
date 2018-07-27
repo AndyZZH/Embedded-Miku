@@ -8,12 +8,6 @@
 #include "audio_recorder.h"
 
 
-#define DEFAULT_VOLUME 80
-
-#define SAMPLE_RATE 44100
-#define NUM_CHANNELS 1
-
-
 class AudioRecorder : public Audio {
 public:
     AudioRecorder();
@@ -82,10 +76,10 @@ void AudioRecorder::doThread() {
 // ----- Adapters to wrap C++ code into C
 static AudioRecorder *recorder;
 
-extern "C"
-void AudioRecorder_setVolume(int newVolume) {
-    recorder->setVolume(newVolume);
-}
+// extern "C"
+// void AudioRecorder_setVolume(int newVolume) {
+//     recorder->setVolume(newVolume);
+// }
 
 extern "C"
 unsigned long AudioRecorder_getFrameSize(void) {
