@@ -379,7 +379,7 @@ static void LED_refresh(void)
 {
     struct timespec reqtime;
     reqtime.tv_sec = 0; 
-    reqtime.tv_nsec = 5 * 1000000; 
+    reqtime.tv_nsec = 5 * 10000; 
     
     for ( int rowNum = 0; rowNum < 8; rowNum++ ) {
         lseek(fileDesc_oe, 0, SEEK_SET);
