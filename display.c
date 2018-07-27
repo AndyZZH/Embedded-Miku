@@ -8,6 +8,7 @@
 #define COMPONENT_MAX_NUM 5 
 #define DISPLAY_WIDTH 32 
 #define COLOR_MAPPING_SIZE 4
+#define MAX_LIFE 8
 
 /*
  *   button:
@@ -76,7 +77,7 @@ static void* displayLoop (void* empty)
                 currentComponent[i].height = -1;
 
             if ( currentHeight >=0 ){
-                LED_display_rectangle(slot*8 + goneLife, currentHeight, slot*8 + width-1 - goneLife, (currentHeight+1)%16, color_mapping[slot] );
+                LED_display_rectangle(slot*8 + goneLife/2, currentHeight, slot*8 + width-1 - goneLife/2, (currentHeight+1)%16, color_mapping[slot] );
                 currentComponent[i].height++;
                 if (currentComponent[i].height >= 16){
                     currentComponent[i].height = -1;
@@ -94,7 +95,7 @@ static void* displayLoop (void* empty)
 static void displayLife (void)
 {
     for (int i = 0; i < 4; i++){
-        LED_display_rectangle(i*8 + goneLife, 15, (i+1)*8 - (1 + goneLife), 15, color_mapping[i]);
+        LED_display_rectangle(i*8 + goneLife/2, 15, (i+1)*8 - (1 + goneLife/2), 15, color_mapping[i]);
     }
 }
 
@@ -123,10 +124,12 @@ void Display_generateComponent (int button)
     return;
 }
 
-void Display_decreaseLife(void)
+void Display_decreaseLife(int life)
 {
-    if (goneLife <=3)
-    	goneLife++;
+    if (goneLife <= 7)
+    {
+    	goneLife = MAX_LIFE - life;
+    }
 }
 
 void Display_recharegeLife(void)

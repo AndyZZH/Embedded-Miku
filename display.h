@@ -27,7 +27,7 @@ void Display_cleanup(void);
  */
 void Display_generateComponent(int button);
 
-void Display_decreaseLife(void);
+void Display_decreaseLife(int life);
 
 void Display_rechargeLife(void);
 #endif
