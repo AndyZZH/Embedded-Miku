@@ -6,6 +6,7 @@ extern "C" {
 #endif
 
 long long Util_getCurrentTime();
+char *Util_CurrentTimeStr();
 
 #ifdef __cplusplus
 }
