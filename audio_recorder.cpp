@@ -12,10 +12,10 @@ class AudioRecorder : public Audio {
 public:
     AudioRecorder();
     ~AudioRecorder();
-    double *getNextAudioReading();
+    float *getNextAudioReading();
 private:
     std::mutex soundQueueMutex;
-    std::queue<double*> sndQueue;
+    std::queue<float*> sndQueue;
     void doThread() override;
 };
 
@@ -32,10 +32,10 @@ AudioRecorder::~AudioRecorder() {
 }
 
 
-double *AudioRecorder::getNextAudioReading() {
+float *AudioRecorder::getNextAudioReading() {
     std::lock_guard<std::mutex> guard(soundQueueMutex);
     if (!sndQueue.empty()) {
-        double *returnVal = sndQueue.front();
+        float *returnVal = sndQueue.front();
         sndQueue.pop();
         return returnVal;
     } else {
@@ -48,7 +48,7 @@ void AudioRecorder::doThread() {
     // TODO: Need to handle infinite loop. Possibly implement stopping mechanism. 
     while (true) {
         // Create a new array to store read samples
-        double *buffer = new double[playbackBufferSize];
+        float *buffer = new float[playbackBufferSize];
 
         // Read the audio
         snd_pcm_sframes_t frames = snd_pcm_readi(handle, buffer, playbackBufferSize);
@@ -97,6 +97,6 @@ void AudioRecorder_cleanup(void) {
 }
 
 extern "C"
-double *AudioRecorder_getNextAudioReading(void) {
+float *AudioRecorder_getNextAudioReading(void) {
     return recorder->getNextAudioReading();
 }
