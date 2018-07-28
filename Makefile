@@ -28,10 +28,13 @@ CPPFLAGS = -Wall -g -std=c++11 -Werror
 # If CROSS_TOOL is not defined, we are compiling on host and use -L$(LIBDIR)/x86-linux as linker folder
 # otherwise, we will use -L$(LIBDIR)/arm-linux as linker folder
 ifeq ($(CROSS_TOOL),)
-	LFLAGS := -L$(LIBDIR)/x86-linux -lpthread -lasound -lbtrack -lsamplerate
+	LFLAGS := -L$(LIBDIR)/x86-linux
 else ifeq ($(CROSS_TOOL),arm-linux-gnueabihf-)
-	LFLAGS := -L$(LIBDIR)/arm-linux -lpthread -lasound -lbtrack -lsamplerate
+	LFLAGS := -L$(LIBDIR)/arm-linux
 endif
+
+# LFLAGS = -lpthread -lasound -lbtrack -lsamplerate
+LFLAGS += -lpthread -lasound -laubio -Wl,-unresolved-symbols=ignore-in-shared-libs
 
 
 # -pg for supporting gprof profiling.
