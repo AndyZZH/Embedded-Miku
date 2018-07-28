@@ -4,7 +4,8 @@
 #include <alsa/asoundlib.h>
 #include <thread>
 
-#define DEFAULT_VOLUME  98
+#define DEFAULT_PLAYBACK_VOLUME  100
+#define DEFAULT_CAPTURE_VOLUME  80
 #define MAX_VOLUME      100
 
 #define SAMPLE_RATE 44100

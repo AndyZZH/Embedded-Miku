@@ -7,9 +7,11 @@ Audio::Audio(AudioMode mode) {
     volume = 0;
     playbackBufferSize = 0;
 
+
+
     // Open the PCM input/output depending on audio mode
     if (mode == CAPTURE) {
-        setCaptureVolume(DEFAULT_VOLUME);
+        setCaptureVolume(DEFAULT_CAPTURE_VOLUME);
         int err = snd_pcm_open(&handle, "default", SND_PCM_STREAM_CAPTURE, 0);
         if (err < 0) {
             printf("Capture open error: %s\n", snd_strerror(err));
@@ -17,7 +19,7 @@ Audio::Audio(AudioMode mode) {
         }
     }
     else if (mode == PLAYBACK) {
-        setPlaybackVolume(DEFAULT_VOLUME);
+        setPlaybackVolume(DEFAULT_PLAYBACK_VOLUME);
         int err = snd_pcm_open(&handle, "default", SND_PCM_STREAM_PLAYBACK, 0);
         if (err < 0) {
             printf("Playback open error: %s\n", snd_strerror(err));
