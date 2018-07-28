@@ -9,6 +9,7 @@
 #include <string.h>
 #include <stdbool.h>
 #include <time.h>
+#include <pthread.h>
 
 #define DEFAULT_DELAY_TIMEms 1000 // default delay time is 1s
 #define REACT_TIMEms 250 //default react time +- 0.25s
@@ -24,6 +25,7 @@ static long long beatQueue[XBOX_NUM_TYPE];
 static int life = DEFAULT_LIFE;
 static bool timeoutQueue[XBOX_NUM_TYPE];
 static bool gameOver = false;
+static pthread_mutex_t slot_lock;
 
 static void decrease_life(){
   life--;
@@ -43,10 +45,12 @@ void Game_init(void){
     score = DEFAULT_SCORE;
     score_setDigit(score);
     life = DEFAULT_LIFE;
+    pthread_mutex_lock(&slot_lock);
     for (int i = 0; i < XBOX_NUM_TYPE; i++){
         beatQueue[i] = 0;
         timeoutQueue[i] = false;
     }
+    pthread_mutex_unlock(&slot_lock);
 }
 
 void Game_cleanup(void){
@@ -70,19 +74,22 @@ void Game_EnqueueBeat(void){
     int currentSlot = rand() % XBOX_NUM_TYPE;
     long long currentTime = Util_getCurrentTime();
 	if(!gameOver){
+      pthread_mutex_lock(&slot_lock);
 	    for (int i = 0; i < XBOX_NUM_TYPE; i++){
-		//printf("beatqueue %lld, current time: %lld, delay: %lld\n",beatQueue[currentSlot], currentTime, delayTime );
-		if (currentSlot == XBOX_NUM_TYPE) currentSlot = 0; // start all over from left hand side
-		if (beatQueue[currentSlot] + delayTime < currentTime){
-		    // overdue, see it as an empty slot
-		    beatQueue[currentSlot] = currentTime;
-		    timeoutQueue[currentSlot] = true;
-		    // call led dropping
-		    Display_generateComponent(currentSlot);
-		    break;
-		}
-		currentSlot++;
+		      //printf("beatqueue %lld, current time: %lld, delay: %lld\n",beatQueue[currentSlot], currentTime, delayTime );
+		        if (currentSlot == XBOX_NUM_TYPE) currentSlot = 0; // start all over from left hand side
+            if (beatQueue[currentSlot] + delayTime < currentTime){
+		            // overdue, see it as an empty slot
+		              beatQueue[currentSlot] = currentTime;
+		              timeoutQueue[currentSlot] = true;
+
+		            // call led dropping
+		              Display_generateComponent(currentSlot);
+		              break;
+		         }
+		         currentSlot++;
 	    }
+      pthread_mutex_unlock(&slot_lock);
 	}
 }
 
@@ -104,22 +111,26 @@ void Game_checkBeat(int button_id){
     long long currentTime = Util_getCurrentTime();
     long long timeInSlot = beatQueue[button_id];
     if(button_id == RESTART_BTN){
-	if(gameOver){
-	  Game_init();
-	  Display_rechargeLife(DEFAULT_LIFE);
-	  gameOver = false;
-	}
+	     if(gameOver){
+	        Game_init();
+	        Display_rechargeLife(DEFAULT_LIFE);
+	        gameOver = false;
+          printf("Game restarted, life left: %d\n", DEFAULT_LIFE);
+	      }
     }
     else if (timeInSlot + delayTime - currentTime < REACT_TIMEms && timeInSlot + delayTime - currentTime > -REACT_TIMEms ){
         // within time interval, score++
         score ++;
         score_setDigit(score);
+
+        pthread_mutex_lock(&slot_lock);
         beatQueue[button_id] = 0;
         timeoutQueue[button_id] = false;
-	printf("The score is %d.\n", score);
+        pthread_mutex_unlock(&slot_lock);
+	      printf("The score is %d.\n", score);
     }
     else{
-	decrease_life();
+	     decrease_life();
     }
 }
 
