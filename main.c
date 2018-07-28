@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <unistd.h>
+#include "beat.h"
 #include "led.h"
 #include "display.h"
 #include "game.h"
@@ -23,6 +24,7 @@ int main() {
     // Input_init();
     Game_init();
     AudioRecorder_init();
+    Beat_init();
     ProcessFrame_init();
     Playback_init();
 

@@ -9,7 +9,10 @@ extern "C" {
 
 // bool Beat_isBeat(short* frame, int frameSize);
 bool Beat_isIdle(void);
-void Beat_enqueueIfIsBeat(double* frame, unsigned long frameSize, BTrack* bt);
+// void Beat_enqueueIfIsBeat(double* frame, unsigned long frameSize, BTrack* bt);
+void Beat_enqueueIfIsBeat(float* frame);
+
+void Beat_init(void);
 
 #ifdef __cplusplus
 }
