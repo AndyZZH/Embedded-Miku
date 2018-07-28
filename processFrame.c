@@ -19,15 +19,15 @@ static _Bool processFrameTerminated = false;
 static pthread_t processFrameId;
 static unsigned long frameSize;
 static struct timespec reqtime;
-static struct BTrack* bt;
+// static struct BTrack* bt;
 
 void ProcessFrame_init(void){
     reqtime.tv_sec=0;
-    reqtime.tv_nsec = 20 * 1000;
+    reqtime.tv_nsec = 50 * 1000;
 
     frameSize = AudioRecorder_getFrameSize();
 
-    bt = newBTrack_hs_fs(frameSize, frameSize * 2);    
+    // bt = newBTrack_hs_fs(frameSize, frameSize * 2);    
     pthread_create(&processFrameId, NULL, processFrameThread, NULL);
 }
 
@@ -42,13 +42,13 @@ static void* processFrameThread(void* arg){
     printf("[ProcessFrame] processFrame thread start");
     frameSize = AudioRecorder_getFrameSize();
     while (!processFrameTerminated){
-        double* frame= AudioRecorder_getNextAudioReading();
+        float* frame= AudioRecorder_getNextAudioReading();
         if (frame == NULL){
             continue;
         }
-        Playback_playWithDelay(frame,frameSize, Game_getDelayTime());
+        Playback_playWithDelay(frame,frameSize, 100);
         if (Beat_isIdle()){
-            Beat_enqueueIfIsBeat(frame,frameSize, bt);
+            Beat_enqueueIfIsBeat(frame);
         }
         nanosleep(&reqtime, NULL);
     }
