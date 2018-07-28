@@ -30,10 +30,22 @@ You will need to do the following in target (BBG):
 
 ## Building an executable
 
-1. Change directory to the root folder and then run the `Makefile` with command `make`. 
+1. Reboot the BeagleBone after installing the driver. 
+
+2. Change directory to the root folder and then run the `Makefile` with command `make`. 
 
     With default settings, it will use `arm-linux-gnueabihf-g++` and `arm-linux-gnueabihf-gcc` to cross compile. 
 
     If you don't want cross compilation, run the `Makefile` with `make CROSS_TOOL=`, which erases out the cross tool prefix before `g++` and `gcc`.
 
-2. The executable will be generated and located in `~/cmpt433/public/myApps/miku`. 
+3. The executable will be generated and located in `~/cmpt433/public/myApps/miku`. 
+
+
+## Initial Setup for Running the executable
+
+1. We need to install XBox controller driver first before running the program. Finish this step by executing the script located in `script/joystick_script`. You may need to add executing permission (`chmod +x joystick_script`) first. 
+
+2. Enable the I2C in the BeagleBone by executing `echo BB-I2C1 > sys/devices/platform/bone_capemgr/slots`. 
+
+3. Run the executable `miku` and have fun!
+ 
