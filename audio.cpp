@@ -38,7 +38,7 @@ Audio::Audio(AudioMode mode) {
             NUM_CHANNELS,
             SAMPLE_RATE,
             1,			// Allow software resampling
-            50000);		// 0.05 seconds per buffer
+            80000);		// 0.05 seconds per buffer
     if (err < 0) {
         printf("Playback open error: %s\n", snd_strerror(err));
         exit(EXIT_FAILURE);

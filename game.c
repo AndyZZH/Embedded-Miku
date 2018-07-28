@@ -11,8 +11,8 @@
 #include <time.h>
 #include <pthread.h>
 
-#define DEFAULT_DELAY_TIMEms 1000 // default delay time is 1s
-#define REACT_TIMEms 250 //default react time +- 0.25s
+#define DEFAULT_DELAY_TIMEms 2000 // default delay time is 1s
+#define REACT_TIMEms 500 //default react time +- 0.25s
 #define DEFAULT_SCORE 0 //default score is 0
 #define DEFAULT_LIFE 8 // default chances before player lose
 #define RESTART_BTN 6 // the id of button to be clicked to restart the game

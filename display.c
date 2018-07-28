@@ -46,7 +46,7 @@ int Display_init (int delayTimeInMs, void (*f) (int))
         currentComponent[i].slot = -1;
     } 
     running = true;
-    totalDelay = delayTimeInMs *1000000 ; 
+    totalDelay = delayTimeInMs; 
     goneLife = 0;
 
     int threadCreateResult = pthread_create (&displayThread, NULL, displayLoop, NULL);
@@ -80,15 +80,20 @@ static void* displayLoop (void* empty)
                 currentComponent[i].height = -1;
 			    Game_checkTimeout(slot);
             }
-
-            if ( currentHeight >=0 ){
-                LED_display_rectangle(slot*SLOT_SIZE + goneLife/2, currentHeight, slot*SLOT_SIZE + width-1 - goneLife/2, (currentHeight+1) % DISPLAY_HEIGHT, color_mapping[slot] );
-                currentComponent[i].height++;
-                if (currentComponent[i].height >= DISPLAY_HEIGHT){
-                    currentComponent[i].height = -1;
-			        Game_checkTimeout(slot);
-                } 
+            pthread_mutex_lock (&currentComponentLock);
+            {
+                currentHeight = currentComponent[i].height; 
+                slot = currentComponent[i].slot;
+                if ( currentHeight >=0 ){
+                    LED_display_rectangle(slot*SLOT_SIZE + goneLife/2, currentHeight, slot*SLOT_SIZE + width-1 - goneLife/2, (currentHeight)/* % DISPLAY_HEIGHT*/, color_mapping[slot] );
+                    currentComponent[i].height++;
+                    if (currentComponent[i].height >= DISPLAY_HEIGHT){
+                        currentComponent[i].height = -1;
+			            Game_checkTimeout(slot);
+                    } 
+                }
             }
+            pthread_mutex_unlock (&currentComponentLock);
         } 
         displayLife();
         nanosleep(&reqtime, NULL); 
@@ -143,7 +148,7 @@ void Display_decreaseLife(int life)
 
 void Display_rechargeLife(int life)
 {
-    if (life >= MAX_LIFE){
+    if (life > MAX_LIFE){
         goneLife = 0;
         return;
     }

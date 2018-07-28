@@ -46,7 +46,7 @@ static void* processFrameThread(void* arg){
         if (frame == NULL){
             continue;
         }
-        Playback_playWithDelay(frame,frameSize, 100);
+        Playback_playWithDelay(frame,frameSize, 2000);
         if (Beat_isIdle()){
             Beat_enqueueIfIsBeat(frame);
         }

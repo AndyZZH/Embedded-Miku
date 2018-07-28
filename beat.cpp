@@ -123,6 +123,7 @@ bool Beat_isIdle() {
 extern "C"
 void Beat_init() {
     unsigned long frameSize = AudioRecorder_getFrameSize();
+    std::cout << "Frame size: " << frameSize << std::endl;
     int hopSize = frameSize / 2;
 
     data_in = new_fvec(frameSize);
