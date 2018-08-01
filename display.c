@@ -39,6 +39,13 @@ static component currentComponent[COMPONENT_MAX_NUM];
 static void* displayLoop (void *);
 static void displayLife(void);
 
+/*
+ * Function: Display_init()
+ * -------------------------
+ *  init Display
+ *
+ *  @ delaytime : the period which it takes for the component to go down one row in ms
+ */
 int Display_init (int delayTimeInMs, void (*f) (int))
 {
     for (int i = 0; i < COMPONENT_MAX_NUM; i++){
@@ -53,7 +60,7 @@ int Display_init (int delayTimeInMs, void (*f) (int))
     return threadCreateResult;
 }
 
-// functino for thread which will keep checking currentComponent and display them
+// function for thread which will keep checking currentComponent and display them
 static void* displayLoop (void* empty)
 {
     printf ( "start displaying loop \n");
@@ -85,7 +92,7 @@ static void* displayLoop (void* empty)
                 currentHeight = currentComponent[i].height; 
                 slot = currentComponent[i].slot;
                 if ( currentHeight >=0 ){
-                    LED_display_rectangle(slot*SLOT_SIZE + goneLife/2, currentHeight, slot*SLOT_SIZE + width-1 - goneLife/2, (currentHeight)/* % DISPLAY_HEIGHT*/, color_mapping[slot] );
+                    LED_display_rectangle(slot*SLOT_SIZE + goneLife/2, currentHeight, slot*SLOT_SIZE + width-1 - goneLife/2, (currentHeight), color_mapping[slot] );
                     currentComponent[i].height++;
                     if (currentComponent[i].height >= DISPLAY_HEIGHT){
                         currentComponent[i].height = -1;
@@ -102,6 +109,8 @@ static void* displayLoop (void* empty)
     return NULL;
 }
 
+// Generate LED bar at the bottom of a LED matrix to indicate
+// how many lives are left
 static void displayLife (void)
 {
     for (int i = 0; i < 4; i++){
@@ -116,6 +125,20 @@ void Display_cleanup(void)
     LED_cleanup();
 }
 
+/*
+ * Function: Display_geneationComponenet()
+ * ---------------------------
+ * Function to check the free slots for displaying component
+ * - if there is, enqueue in it
+ * - if no slot available, skip
+ *
+ *   @ button:
+ *      - 0 : A (Green)
+ *      - 1 : B (Red)
+ *      - 2 : X (Blue)
+ *      - 3 : Y (Yellow)
+ */
+/
 void Display_generateComponent (int button)
 {
     if (button > 3 || button < 0)
@@ -134,6 +157,12 @@ void Display_generateComponent (int button)
     return;
 }
 
+/*
+ * Function: Display_decreaseLife()
+ * ---------------------------
+ * Function to decrease life to @life
+ *
+ */
 void Display_decreaseLife(int life)
 {
     if (life >= MAX_LIFE){
@@ -146,6 +175,13 @@ void Display_decreaseLife(int life)
     }
 }
 
+/*
+ * Function: Display_decreaseLife()
+ * ---------------------------
+ * Function to recharge life to @life
+ * if @life is more than MAX_LIFE, it recharge just as much as MAX_LIFE
+ *
+ */
 void Display_rechargeLife(int life)
 {
     if (life > MAX_LIFE){

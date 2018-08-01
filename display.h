@@ -6,7 +6,7 @@
  * -------------------------
  *  init Display
  *
- *  @ delaytime : the period which it takes for the component to reach its destination and disapper
+ *  @ delaytime : the period which it takes for the component to go down one row in ms
  */
 int Display_init(int delaytime);
 
@@ -27,7 +27,22 @@ void Display_cleanup(void);
  */
 void Display_generateComponent(int button);
 
+/*
+ * Function: Display_decreaseLife()
+ * ---------------------------
+ * Function to decrease life to @life
+ *
+ */
 void Display_decreaseLife(int life);
 
+
+/*
+ * Function: Display_decreaseLife()
+ * ---------------------------
+ * Function to recharge life to @life
+ * if @life is more than MAX_LIFE, it recharge just as much as MAX_LIFE
+ *
+ */
+void Display_decreaseLife(int life);
 void Display_rechargeLife(int life);
 #endif
