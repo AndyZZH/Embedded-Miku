@@ -31,6 +31,9 @@
 #define BUFF_SIZE 64 
 #define SLOT_NUM  4
 
+#define LED_COLUM_NUM 32
+#define LED_ROW_NUM 16
+
 static int fileDesc_red1;
 static int fileDesc_blue1;
 static int fileDesc_green1;
@@ -50,7 +53,7 @@ static int fileDesc_oe;
 struct timespec reqtime;
 
 // LED values for display
-static int screen[32][16];
+static int screen[LED_COLUM_NUM][LED_ROW_NUM];
 
 static pthread_t refreshThread;
 static pthread_mutex_t screenLock = PTHREAD_MUTEX_INITIALIZER;
@@ -76,8 +79,8 @@ static void* refreshLoop (void*);
 int LED_init (void)
 {
     GPIO_setPins();
-    for( int i = 0; i < 32; i++)
-        for (int j = 0; j < 16; j++)
+    for( int i = 0; i < LED_COLUM_NUM; i++)
+        for (int j = 0; j < LED_ROW_NUM; j++)
                 screen[i][j] = 0;
 
     running = true;
@@ -85,6 +88,7 @@ int LED_init (void)
     return threadCreateResult;
 }
 
+// for thread which keeps refreshing LED
 static void* refreshLoop (void* empty)
 {
     while (running) {
@@ -102,12 +106,17 @@ void LED_cleanup(void)
     return;
 }
 
+// display rectangle on LED
+// @params:
+//      two vertexs for diagonal of the rectangle
+//      (x1, y1) : one of Vertex for rectangle
+//      (x2, y2) : the other vertex for rectangle 
 void LED_display_rectangle(int x1, int y1, int x2, int y2, int color)
 {
-    assert ( 0 <= x1 && x1 <= 31);
-    assert ( 0 <= x2 && x2 <= 31);
-    assert ( 0 <= y1 && y1 <= 15);
-    assert ( 0 <= y2 && y2 <= 15);
+    assert ( 0 <= x1 && x1 <= LED_COLUM_NUM-1);
+    assert ( 0 <= x2 && x2 <= LED_COLUM_NUM-1);
+    assert ( 0 <= y1 && y1 <= LED_ROW_NUM-1);
+    assert ( 0 <= y2 && y2 <= LED_ROW_NUM-1);
 
 
     int min_x;
@@ -141,9 +150,10 @@ void LED_display_rectangle(int x1, int y1, int x2, int y2, int color)
     return;
 }
 
+// Clean up LED 
 void LED_clean_display()
 {
-    LED_display_rectangle(0,0, 31, 15,0);
+    LED_display_rectangle(0,0, LED_COLUM_NUM-1, LED_ROW_NUM-1,0);
 }
 
 static int fileDesc_opener(int gpio_num)
