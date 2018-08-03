@@ -5,6 +5,8 @@
 #define __PROCESS_FRAME_H
 
 
+// init() must be called before any other functions,
+// cleanup() must be called last to stop recording threads and free memory.
 void ProcessFrame_init(void);
 void ProcessFrame_cleanup(void);
 

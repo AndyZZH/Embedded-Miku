@@ -11,6 +11,9 @@
 #define SAMPLE_RATE 44100
 #define NUM_CHANNELS 1
 
+/* The enum AudioMode is used when initializing an Audio class.
+ * It is now being used in derived class AudioRecorder and AudioPlayer. 
+ */
 enum AudioMode {
     CAPTURE, 
     PLAYBACK
