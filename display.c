@@ -138,7 +138,6 @@ void Display_cleanup(void)
  *      - 2 : X (Blue)
  *      - 3 : Y (Yellow)
  */
-/
 void Display_generateComponent (int button)
 {
     if (button > 3 || button < 0)

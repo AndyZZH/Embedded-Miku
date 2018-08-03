@@ -1,7 +1,8 @@
 #ifndef __BEAT_H
 #define __BEAT_H
 
-#include "./libs/btrack/BTrack_wrapper.h"
+#include <stdbool.h>
+
 
 #ifdef __cplusplus
 extern "C" {
