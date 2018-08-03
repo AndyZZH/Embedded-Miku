@@ -19,9 +19,7 @@ private:
 
 
 AudioPlayer::AudioPlayer() : Audio(PLAYBACK) {
-    // Launch a new thread to start playing back
-    // playbackBuffer = nullptr;
-    // threadObj = std::thread([this]{ this->doThread(); });
+
 }
 
 

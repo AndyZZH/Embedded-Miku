@@ -3,6 +3,8 @@
 
 #include "audio.h"
 
+#define ALSA_BUFFER_SIZE 80000
+
 Audio::Audio(AudioMode mode) {
     volume = 0;
     playbackBufferSize = 0;
@@ -37,8 +39,8 @@ Audio::Audio(AudioMode mode) {
             SND_PCM_ACCESS_RW_INTERLEAVED,
             NUM_CHANNELS,
             SAMPLE_RATE,
-            1,			// Allow software resampling
-            80000);		// 0.05 seconds per buffer
+            1,		            // Allow software resampling
+            ALSA_BUFFER_SIZE);	// 0.08 seconds per buffer
     if (err < 0) {
         printf("Playback open error: %s\n", snd_strerror(err));
         exit(EXIT_FAILURE);

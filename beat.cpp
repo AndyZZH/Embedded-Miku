@@ -15,6 +15,8 @@ extern "C" {
 #include <chrono>
 
 #define SAMPLE_RATE 44100
+#define AUBIO_ONSET_LOG_COMPRESSION         10
+#define AUBIO_ONSET_MIN_INTER_INTERVAL_MS   200
 
 // #define DEFAULT_HOP_SIZE 50
 /*
@@ -35,53 +37,6 @@ static fvec_t *result;
 static volatile bool isIdle = true;
 
 
-
-// static void Beat_processBeat(double* frame, unsigned long frameSize, BTrack* bt) {
-//     isIdle = false;
-//     // struct BTrack* bt = newBTrack_hs_fs(frameSize/2, frameSize);
-//     // std::cout << "frameSize: " <<  frameSize << std::endl;
-//     // fill frame
-//     BTrack_call_processAudioFrame(bt, frame);
-//     bool ans = BTrack_call_beatDueInCurrentFrame(bt);
-
-//     std::cout << frame[0] << std::endl;
-
-//     if (ans) {
-//         std::cout << "Is beat!" << std::endl;
-//         Game_EnqueueBeat();
-//     } else {
-//         std::cout << "Not a beat" << std::endl;
-//     }
-
-//     // BTrack_clean(bt);
-//     isIdle = true;
-//     // return ans;
-    
-//     // **************************************
-//     // // threshold
-//     // long sum = 0;
-//     // for (int i = 0; i< frameSize; i++){
-//     //     // printf("%f\n", frame[i]);
-//     //     sum = sum + (long)(frame[i]*100);
-//     // }
-//     // printf("%ld\n", sum);
-
-
-//     // **************************************
-//     // random
-//     // int r = rand() % 10;
-//     // bool ans = r < 2;
-//     // if (ans)
-//     // {
-//     //     printf("beat\n");
-//     // }
-//     // else{
-//     //     printf("no beat\n");
-//     // }
-//     // return ans;
-// }
-
-
 static void Beat_processBeat(float* frame) {
     isIdle = false;
 
@@ -99,14 +54,9 @@ static void Beat_processBeat(float* frame) {
     
 
     if (is_beat) {
-        std::cout << "[" << Util_CurrentTimeStr() << "] " << "Is beat! " 
-                //   << aubio_tempo_get_bpm(tempo) << " bpm, "
-                //   << "with confidence " << aubio_tempo_get_confidence(tempo) 
-                  << std::endl;
+        std::cout << "[" << Util_CurrentTimeStr() << "] " << "Is beat! " << std::endl;
         Game_EnqueueBeat();
-    } //else {
-    //     std::cout << "Not a beat" << std::endl;
-    // }
+    }
 
     fvec_zeros(data_in);
     fvec_zeros(result);
@@ -138,11 +88,11 @@ void Beat_init() {
         std::cerr << "Failed to enable adaptive whitening for aubio library!" << std::endl;
     }
 
-    if (aubio_onset_set_compression(tempo, 10)) {
+    if (aubio_onset_set_compression(tempo, AUBIO_ONSET_LOG_COMPRESSION)) {
         std::cerr << "Failed to enable log compression for aubio library!" << std::endl;
     }
 
-    if (aubio_onset_set_minioi_ms(tempo, 200)) {
+    if (aubio_onset_set_minioi_ms(tempo, AUBIO_ONSET_MIN_INTER_INTERVAL_MS)) {
         std::cerr << "Failed to set minimum inter onset interval for aubio library!" << std::endl;
     }
 }

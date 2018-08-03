@@ -11,6 +11,7 @@
 #include <stdbool.h>
 
 #define DEFAULT_HOP_SIZE 50
+#define DELAY_TIME 2000
 
 // prototype
 static void* processFrameThread(void* arg);
@@ -46,7 +47,7 @@ static void* processFrameThread(void* arg){
         if (frame == NULL){
             continue;
         }
-        Playback_playWithDelay(frame,frameSize, 2000);
+        Playback_playWithDelay(frame,frameSize, DELAY_TIME);
         if (Beat_isIdle()){
             Beat_enqueueIfIsBeat(frame);
         }
