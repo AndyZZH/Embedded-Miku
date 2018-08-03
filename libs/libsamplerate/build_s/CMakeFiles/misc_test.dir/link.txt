@@ -1,1 +1,0 @@
-/usr/bin/cc     CMakeFiles/misc_test.dir/tests/misc_test.c.o CMakeFiles/misc_test.dir/tests/util.c.o CMakeFiles/misc_test.dir/tests/calc_snr.c.o  -o misc_test -rdynamic libsamplerate.so -lm -Wl,-rpath,/home/andy/Embedded-Miku/libsamplerate/build_s 

@@ -1,1 +1,0 @@
-/usr/bin/cc     CMakeFiles/termination_test.dir/tests/termination_test.c.o CMakeFiles/termination_test.dir/tests/util.c.o CMakeFiles/termination_test.dir/tests/calc_snr.c.o  -o termination_test -rdynamic libsamplerate.so -lm -Wl,-rpath,/home/andy/Embedded-Miku/libsamplerate/build_s 

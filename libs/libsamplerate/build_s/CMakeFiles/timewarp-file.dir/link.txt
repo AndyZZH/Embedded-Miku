@@ -1,1 +1,0 @@
-/usr/bin/cc     CMakeFiles/timewarp-file.dir/examples/timewarp-file.c.o CMakeFiles/timewarp-file.dir/examples/audio_out.c.o  -o timewarp-file -rdynamic libsamplerate.so -lm -lasound -Wl,-rpath,/home/andy/Embedded-Miku/libsamplerate/build_s 

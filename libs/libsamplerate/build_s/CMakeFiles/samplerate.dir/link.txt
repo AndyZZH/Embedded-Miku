@@ -1,1 +1,0 @@
-/usr/bin/cc  -fPIC   -shared -Wl,-soname,libsamplerate.so -o libsamplerate.so CMakeFiles/samplerate.dir/src/samplerate.c.o CMakeFiles/samplerate.dir/src/src_linear.c.o CMakeFiles/samplerate.dir/src/src_sinc.c.o CMakeFiles/samplerate.dir/src/src_zoh.c.o 

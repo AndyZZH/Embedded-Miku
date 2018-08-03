@@ -1,1 +1,0 @@
-/usr/bin/cc     CMakeFiles/nullptr_test.dir/tests/nullptr_test.c.o CMakeFiles/nullptr_test.dir/tests/util.c.o CMakeFiles/nullptr_test.dir/tests/calc_snr.c.o  -o nullptr_test -rdynamic libsamplerate.so -lm -Wl,-rpath,/home/andy/Embedded-Miku/libsamplerate/build_s 
