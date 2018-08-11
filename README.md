@@ -2,6 +2,10 @@
 
 Embedded-Miku is a real-time music game runs on embedded system, inspired by [Hatsune Miku](https://en.wikipedia.org/wiki/Hatsune_Miku) music game. This is also final project in Embedded System course in [SFU](https://www.sfu.ca/).
 
+Look at this [writeup](https://github.com/AndyZZH/Embedded-Miku/blob/master/demo/WRITE_UP.pdf) for more information.
+
+![alt text](https://github.com/AndyZZH/Embedded-Miku/blob/master/demo/demo.png)
+
 ## Initial Dependency Setup for BeagleBone Green
 
 You will need to do the following in target (BBG):
