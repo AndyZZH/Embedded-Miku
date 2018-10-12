@@ -39,7 +39,7 @@ Follow the instructions below in BBG:
 
 1. To install XBox controller driver, execute the script `script/joystick_script`.
 
-   (You may need to add executing permission by the command `chmod +x joystick_script`.)
+   You may need to add executing permission by the command `chmod +x joystick_script`.
 
 2. Enable the I2C in the BeagleBone by executing `echo BB-I2C1 > sys/devices/platform/bone_capemgr/slots`. 
 
