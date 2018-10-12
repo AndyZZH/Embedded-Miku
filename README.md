@@ -7,14 +7,14 @@ Refer [Detailed information](https://github.com/AndyZZH/Embedded-Miku/blob/maste
 ![alt text](https://github.com/AndyZZH/Embedded-Miku/blob/master/demo/demo.png)
 <Figure 1: The picture of playing Embedded-Miku>
 
-## Initial Dependency Setup for BeagleBone Green (BBG)
+## Initial Setup for Dependencies
 
 Follow the instructions below in BBG:
 
 1. Add Debian 9's apt-get repo (branch `stretch`) in `/etc/apt/sources.list` for `libc++6` library
 2. Add Debian 9.5's apt-get repo (branch `buster`) in `/etc/apt/sources.list` for `libaubio5` library
 
-## Prerequisites
+## Install Dependencies 
 
 1. Replace all `jessie` word in `/etc/apt/sources.list` with `stretch` and then execute the following:
    ```
@@ -38,6 +38,7 @@ Follow the instructions below in BBG:
 ## Initial Setup
 
 1. To install XBox controller driver, execute the script `script/joystick_script`.
+
    (You may need to add executing permission by the command `chmod +x joystick_script`.)
 
 2. Enable the I2C in the BeagleBone by executing `echo BB-I2C1 > sys/devices/platform/bone_capemgr/slots`. 
