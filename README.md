@@ -35,7 +35,7 @@ Follow the instructions below in BBG:
 
 3. After installing `libsubio5` and `libaubio-dev`, you can reenable the `stretch` spt-get repo and comment out the `buster` one. 
 
-## Initial Setup
+## Initial Setup for Budiling an executable
 
 1. To install XBox controller driver, execute the script `script/joystick_script`.
 
